@@ -91,6 +91,26 @@ void countCMD(char *cmd){
 	free(ptr);
 }
 
+void execCMD(char *cmds[]){
+	int i=0;
+	
+	while(i<num_cmd){
+		char *cmd=malloc(strlen(strstr(cmds[i],"\n")));
+		cmd=strstr(cmds[i],"\n");
+		cmd+=2;
+		switch(cmd[i]){
+			case ' ':
+				cmd++;
+				execlp(cmd, cmd, NULL);
+				break;
+			case '|':
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 int main(int argc, char *argv[]){
 
 	if(argc < 2){
@@ -109,7 +129,9 @@ int main(int argc, char *argv[]){
 	separateCMD(readFile(argv[1]), cmds);
 
 	//Print o array com os comandos
-	print_CMD(cmds);
+	//print_CMD(cmds);
+
+	execCMD(cmds);
 
 	return 0;
 }
