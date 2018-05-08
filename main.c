@@ -17,18 +17,19 @@ char *readFile(char *path){
 	}
 
 	char buff[RDCHAR];
-	char *str = malloc(0);
+	char *str = malloc(RDCHAR);
 	int rd = RDCHAR;
 
 	while(rd == RDCHAR){
 		rd = read(fd, buff, RDCHAR);
-		str = realloc(str, strlen(str)+rd);
 		
 		if(rd != RDCHAR){
 			buff[rd] = '\0';
+			break;
 		}
 
 		strcat(str,buff);
+		str = realloc(str, strlen(str)+rd);
 	}
 
 	if(close(fd) < 0){
@@ -39,6 +40,8 @@ char *readFile(char *path){
 	return str;
 }
 
+
+//Separa a String (c/ os CMD) e guarda-os num array de strings
 char *separateCMD(char *cmd, char *cmds[]){
 	int c = 0, i = 0, w = 0;
 	char buff[250];
@@ -65,6 +68,7 @@ char *separateCMD(char *cmd, char *cmds[]){
 
 		cmds[w]=aux;
 		w++;
+		num_cmd++;
 	}
 	
 	return str;
@@ -78,22 +82,12 @@ void print_CMD(char *cmds[]){
 	}
 }
 
-void countCMD(char *cmd){
-	char *str=malloc(strlen(cmd)+1);
-	char *ptr=str;
-	strcpy(str,cmd);
-
-	while(str[0]!='\0'){
-		if(str[0]=='$'){num_cmd++;}
-		str++;
-	}
-
-	free(ptr);
-}
-
-void execCMD(char *cmds[]){
+void execCMD(char *cmds[], int fd){
 	int i=0;
 	
+	dup2(fd,1);
+	close(fd);
+
 	while(i<num_cmd){
 		char *cmd=malloc(strlen(strstr(cmds[i],"\n")));
 		cmd=strstr(cmds[i],"\n");
@@ -118,9 +112,7 @@ int main(int argc, char *argv[]){
 		exit(0);
 	}
 
-	//Contas os comandos e guarda numa var global
-	countCMD(readFile(argv[1]));
-
+	int res = open("respostas.txt", O_RDWR | O_CREAT, 0644);
 
 	//Array para guardar as strings (cada string contem a descriçao do comando e o comando)
 	char *cmds[num_cmd];
@@ -131,7 +123,8 @@ int main(int argc, char *argv[]){
 	//Print o array com os comandos
 	//print_CMD(cmds);
 
-	execCMD(cmds);
+	//Executa os comandos
+	execCMD(cmds, res);
 
 	return 0;
 }

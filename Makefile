@@ -3,3 +3,4 @@ bash:
 
 clean:
 	rm Bash
+	rm respostas.txt
