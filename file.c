@@ -67,8 +67,3 @@ char *separateCMD(DynaArray *cmds, char *cmd){
 	
 	return str;
 }
-
-int main(int argc, char const *argv[]){
-	printf("Ola\n");
-	return 0;
-}

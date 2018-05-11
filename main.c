@@ -41,9 +41,11 @@ int main(int argc, char *argv[]){
 
 	//Array Dynamico para guardar as strings (cada string contem a descriçao do comando e o comando)
 	DynaArray *cmds = createDynaArray(10);
-
+	
 	//argv[1] é um path para um file para ler!
 	separateCMD(cmds, readFile(argv[1]));
+
+	printDynaArray(cmds);
 
 	//Executa os comandos
 	//execCMD(cmds, res);
