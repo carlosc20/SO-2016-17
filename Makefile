@@ -1,5 +1,5 @@
 bash:
-	gcc -o Bash main.c
+	gcc -o Bash main.c file.c struct.c
 
 clean:
 	rm Bash
