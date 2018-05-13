@@ -8,25 +8,46 @@ void print_CMD(char *cmds[]){
 	}
 }
 
-void execCMD(char *cmds[], int fd){
-	int i = 0;
-	
-	dup2(fd,1);
-	close(fd);
+char **cmdArgs(char *cmd){
+	char *buff[100];
+	char *tok;
+	int i=0;
 
-	while(i < 3){
-		char *cmd = malloc(strlen(cmd = strstr(cmds[i],"\n")));
-		cmd += 2;
+	tok=strtok(cmd," ");
+	while(tok){
+		buff[i]=tok;
+		tok=strtok(NULL," ");
+		i++;
+	}
+
+	char **args=malloc(i*sizeof(char*));
+	int w=0;
+	while(w<i){
+		args[w]=buff[w];
+		w++;
+	}
+
+	return args;
+}
+
+void execCMD(DynaArray *cmds, int fd){
+	int i = 0;
+
+	while(i < cmds->used){
+		char *cmd = strstr(cmds->array[i],"\n");
+		cmd+=2;
 		switch(cmd[i]){
 			case ' ':
 				cmd++;
-				execlp(cmd, cmd, NULL);
+				char **args=cmdArgs(cmd);
+				execvp(args[0], args);
 				break;
 			case '|':
 				break;
 			default:
 				break;
 		}
+		i++;
 	}
 }
 
@@ -45,10 +66,10 @@ int main(int argc, char *argv[]){
 	//argv[1] é um path para um file para ler!
 	separateCMD(cmds, readFile(argv[1]));
 
-	printDynaArray(cmds);
+	//printDynaArray(cmds);
 
 	//Executa os comandos
-	//execCMD(cmds, res);
+	execCMD(cmds, res);
 
 	return 0;
 }
