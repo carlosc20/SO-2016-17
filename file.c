@@ -14,6 +14,7 @@ char *readFile(int fd){
 		
 		if(rd != RDCHAR){
 			buff[rd] = '\0';
+			strcat(str,buff);
 			break;
 		}
 

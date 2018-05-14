@@ -1,15 +1,6 @@
 #include "Includes/main.h"
 #include <sys/wait.h>
 
-
-void print_CMD(char *cmds[]){
-	int i = 0;
-	while(i < 3){
-		printf("%s\n", cmds[i]);
-		i++;
-	}
-}
-
 char **cmdArgs(char *cmd){
 	char *buff[100];
 	char *tok;
@@ -69,16 +60,49 @@ void execCMD(char *str){
 	}
 }
 
-void callCMDS(DynaArray *cmds){
+char *readPipe(int p){
+	char buff[1024];
+	char *str = malloc(1024);
+	int size = 1024;
+
+	while(size==1024){
+		size = read(p,buff,1024);
+
+		if(size != 1024){
+			buff[size] = '\0';
+			strcat(str,buff);
+			break;
+		}
+
+		strcat(str,buff);
+		str = realloc(str, strlen(str) + size);
+	}
+	return str;
+}
+
+void callCMDS(DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	while(i < cmds->used){
+		int p[2];
+		pipe(p);
+
 		if(fork()){
-			wait(NULL);
+			close(p[1]);
+
+			insertDynaArray(ans, readPipe(p[0]));
+
+			close(p[0]);
 		}
 		else{
 			char *cmd=strstr(cmds->array[i], "\n");
 			cmd += 2;
+
+			close(p[0]);
+			dup2(p[1],1);
+			close(p[1]);
+
 			execCMD(cmd);
+
 			exit(0);
 		}
 
@@ -92,15 +116,17 @@ int main(int argc, char *argv[]){
 
 	int fd = openNoteBook(argv[1]);
 
-	//Array Dynamico para guardar as strings (cada string contem a descriçao do comando e o comando)
+	//Array Dynamico para guardar os comandos(incluindo a descriçao do mesmo cmd) e os resultados
 	DynaArray *cmds = createDynaArray(10);
+	DynaArray *ans = createDynaArray(10);
 
-	//argv[1] é um path para um file para ler!
+	//Le o ficheiro (notebook.txt) e insere no array cmds os comandos
 	separateCMD(cmds, readFile(fd));
 
-	callCMDS(cmds);
+	//Chamada um comando de cada vez usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
+	callCMDS(cmds, ans);
 
-	//printDynaArray(cmds);
+	printDynaArray(ans);
 
 	close(fd);
 

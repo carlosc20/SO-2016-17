@@ -10,9 +10,4 @@
 #include "file.h"
 #include "struct.h"
 
-void print_CMD(char *cmds[]);
-char **cmdArgs(char *cmd);
-void execCMD(char *str);
-void callCMDS(DynaArray *cmds);
-
 #endif
