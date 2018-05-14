@@ -1,17 +1,10 @@
-#include "file.h"
+#include "Includes/file.h"
 
 #define RDCHAR 1
 
 int num_cmd = 0;
 
-char *readFile(char *path){
-	int fd;
-
-	if((fd = open(path, O_RDONLY)) < 0){
-		write(2,"Error On Opening File!\n",24);
-		exit(2);
-	}
-
+char *readFile(int fd){
 	char buff[RDCHAR];
 	char *str = malloc(RDCHAR);
 	int rd = RDCHAR;
@@ -26,11 +19,6 @@ char *readFile(char *path){
 
 		strcat(str,buff);
 		str = realloc(str, strlen(str)+rd);
-	}
-
-	if(close(fd) < 0){
-		write(2,"Error On Closing File!\n",24);
-		exit(3);
 	}
 
 	return str;

@@ -11,6 +11,8 @@
 #include "struct.h"
 
 void print_CMD(char *cmds[]);
-void execCMD(DynaArray *cmds, int fd);
+char **cmdArgs(char *cmd);
+void execCMD(char *str);
+void callCMDS(DynaArray *cmds);
 
 #endif

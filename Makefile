@@ -1,6 +1,7 @@
+CC=gcc
+
 bash:
-	gcc -o Bash main.c file.c struct.c
+	$(CC) -o Bash main.c file.c struct.c
 
 clean:
 	rm Bash
-	rm respostas.txt

@@ -1,4 +1,4 @@
-#include "struct.h"
+#include "Includes/struct.h"
 
 DynaArray *createDynaArray(int size){
 	DynaArray *a;

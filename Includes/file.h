@@ -9,7 +9,7 @@
 
 #include "struct.h"
 
-char *readFile(char *path);
+char *readFile(int fd);
 char *separateCMD(DynaArray *cmds, char *cmd);
 
 #endif

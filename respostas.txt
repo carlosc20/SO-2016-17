@@ -1,7 +1,0 @@
-Ola
-Este comando lista os ficheiros:
-$ ls -l
-Agora podemos ordenar estes ficheiros:
-$| sort
-E escolher o primeiro:
-$| head -1
