@@ -1,25 +1,23 @@
 #include "Includes/file.h"
 
-#define RDCHAR 1
-
-int num_cmd = 0;
+#define BUFFER 512
 
 char *readFile(int fd){
-	char buff[RDCHAR];
-	char *str = malloc(RDCHAR);
-	int rd = RDCHAR;
-
-	while(rd == RDCHAR){
-		rd = read(fd, buff, RDCHAR);
-		
-		if(rd != RDCHAR){
-			buff[rd] = '\0';
-			strcat(str,buff);
-			break;
+	char buff[BUFFER];
+	char *str = malloc(BUFFER);
+	int len = 0;
+	int rd;
+	while((rd = read(fd, buff, BUFFER)) > 0){
+		len += rd;
+		if(len){
+			str = realloc(str, len);
+			strcat(str, buff);
+		} else {
+			str = malloc(rd);
 		}
-
-		strcat(str,buff);
-		str = realloc(str, strlen(str)+rd);
+	}
+	if(rd < 0){
+		//Algo correu mal
 	}
 
 	return str;
@@ -29,19 +27,19 @@ char *readFile(int fd){
 //Separa a String (c/ os CMD) e guarda-os num array de strings
 char *separateCMD(DynaArray *cmds, char *cmd){
 	int c = 0, i = 0;
-	
-	char buff[250];	
-	char *str = strdup(cmd);
+
+	char buff[BUFFER];
+	char *str = strdup(cmd); //desnecessário duplicar o cmd
 
 	while(str[0] != '\0'){
 		while(c < 2 && str[0] != '\0'){
 			if(str[1] == '\n'){c++;}
 			buff[i] = str[0];
-			str++;
-			i++;
+			str++; // Estás a perder o apontador para o inicio do malloc (não dá para depois dar free)
+			i++; // Em vez de str[0] -> str[i] ?
 		}
 
-		str++;
+		str++; // Estás a perder o apontador para o inicio do malloc (não dá para depois dar free)
 		buff[i]='\0';
 
 		i = 0;
@@ -50,9 +48,7 @@ char *separateCMD(DynaArray *cmds, char *cmd){
 		char *aux = strdup(buff);
 
 		insertDynaArray(cmds, aux);
-
-		num_cmd++;
 	}
-	
+
 	return str;
 }
