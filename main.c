@@ -1,6 +1,8 @@
 #include "Includes/main.h"
 #include <sys/wait.h>
 
+#define BUFFER 512
+
 char **cmdArgs(char *cmd){
 	char *buff[100];
 	char *tok;
@@ -61,21 +63,23 @@ void execCMD(char *str){
 }
 
 char *readPipe(int p){
-	char buff[1024];
-	char *str = malloc(1024);
-	int size = 1024;
+	char buff[BUFFER];
+	char *str;
+	int len = 0;
+	int rd;
 
-	while(size==1024){
-		size = read(p,buff,1024);
-
-		if(size != 1024){
-			buff[size] = '\0';
-			strcat(str,buff);
-			break;
+	while((rd = read(p, buff, BUFFER)) > 0){
+		if(len){
+			len += rd;
+			str = realloc(str, len);
+			strncat(str, buff, rd);
+		} else {
+			len = rd;
+			str = strndup(buff, rd);
 		}
-
-		strcat(str,buff);
-		str = realloc(str, strlen(str) + size);
+	}
+	if(rd < 0){
+		//Algo correu mal
 	}
 	return str;
 }

@@ -4,22 +4,23 @@
 
 char *readFile(int fd){
 	char buff[BUFFER];
-	char *str = malloc(BUFFER);
+	char *str;
 	int len = 0;
 	int rd;
+
 	while((rd = read(fd, buff, BUFFER)) > 0){
-		len += rd;
 		if(len){
+			len += rd;
 			str = realloc(str, len);
-			strcat(str, buff);
+			strncat(str, buff, rd);
 		} else {
-			str = malloc(rd);
+			len = rd;
+			str = strndup(buff, rd);
 		}
 	}
 	if(rd < 0){
 		//Algo correu mal
 	}
-
 	return str;
 }
 
