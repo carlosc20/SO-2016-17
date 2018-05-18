@@ -6,19 +6,19 @@
 char **cmdArgs(char *cmd){
 	char *buff[100];
 	char *tok;
-	int i=0;
+	int i = 0;
 
-	tok=strtok(cmd," ");
+	tok = strtok(cmd, " ");
 	while(tok){
-		buff[i]=tok;
-		tok=strtok(NULL," ");
+		buff[i] = tok;
+		tok = strtok(NULL, " ");
 		i++;
 	}
 
-	char **args=malloc(i*sizeof(char*));
-	int w=0;
-	while(w<i){
-		args[w]=buff[w];
+	char **args = malloc(i * sizeof(char*));
+	int w = 0;
+	while(w < i){
+		args[w] = buff[w];
 		w++;
 	}
 
@@ -38,24 +38,24 @@ void noArgs(int argc){
 int openNoteBook(char *path){
 	int fd;
 	if((fd = open(path, O_RDWR, 0644)) < 0){
-		write(2,"Error On Opening File!\n",24);
+		write(2, "Error On Opening File!\n", 24);
 	}
 
 	return fd;
 }
 
 
-void execCMD(char *str){
-	char *cmd=strdup(str);
-
+void execCMD(char *cmd){
+	char **args;
+	int index;
 	switch(cmd[0]){
 		case ' ':
-			cmd++;
-			char **args=cmdArgs(cmd);
-
+			args = cmdArgs(cmd);
 			execvp(args[0], args);
+			exit(1); // Não foi possivel executar o comando, dar KILL;
 			break;
 		case '|':
+			sscanf(cmd, "|%d", &index);
 			break;
 		default:
 			break;
@@ -96,18 +96,15 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 			insertDynaArray(ans, readPipe(p[0]));
 
 			close(p[0]);
-		}
-		else{
-			char *cmd=strstr(cmds->array[i], "\n");
-			cmd += 2;
+		} else {
 
 			close(p[0]);
 			dup2(p[1],1);
 			close(p[1]);
 
-			execCMD(cmd);
+			execCMD(cmds->array[i]);
 
-			exit(0);
+			exit(1); //Não foi possivel executar o comando
 		}
 
 		i++;

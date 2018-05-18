@@ -26,30 +26,27 @@ char *readFile(int fd){
 
 
 //Separa a String (c/ os CMD) e guarda-os num array de strings
-char *separateCMD(DynaArray *cmds, char *cmd){
-	int c = 0, i = 0;
-
+void separateCMD(DynaArray *cmds, char *cmd){
+	int flag = 1;
+	char *begin = cmd;
+	char *end;
+	char *aux;
+	int len;
 	char buff[BUFFER];
-	char *str = strdup(cmd); //desnecessário duplicar o cmd
 
-	while(str[0] != '\0'){
-		while(c < 2 && str[0] != '\0'){
-			if(str[1] == '\n'){c++;}
-			buff[i] = str[0];
-			str++; // Estás a perder o apontador para o inicio do malloc (não dá para depois dar free)
-			i++; // Em vez de str[0] -> str[i] ?
+	while(begin){
+		begin = strstr(begin, "$") + 1; //Procura o incio do comando
+		end = strstr(begin, "\n"); //Procura o fim da linha
+
+		if(end){
+			len = end - begin; //Tamanho da string
+			aux = strndup(begin, len);
+			begin = end + 1; //Avança para o próximo
+		} else {
+			aux = strdup(begin);
+			begin = NULL; //Para o ciclo
 		}
-
-		str++; // Estás a perder o apontador para o inicio do malloc (não dá para depois dar free)
-		buff[i]='\0';
-
-		i = 0;
-		c = 0;
-
-		char *aux = strdup(buff);
 
 		insertDynaArray(cmds, aux);
 	}
-
-	return str;
 }
