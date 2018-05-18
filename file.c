@@ -26,27 +26,30 @@ char *readFile(int fd){
 
 
 //Separa a String (c/ os CMD) e guarda-os num array de strings
-void separateCMD(DynaArray *cmds, char *cmd){
+void separateCMD(DynaArray *cmds, DynaArray *descs, char *cmd){
 	int flag = 1;
-	char *begin = cmd;
+	char *start = cmd;
 	char *end;
 	char *aux;
-	int len;
+	char *desc = cmd;
 	char buff[BUFFER];
 
-	while(begin){
-		begin = strstr(begin, "$") + 1; //Procura o incio do comando
-		end = strstr(begin, "\n"); //Procura o fim da linha
+	while(start && (start = strstr(start, "$"))){
+		aux = strndup(desc, start - desc); //Copia a descrição
+		insertDynaArray(descs, aux);
 
-		if(end){
-			len = end - begin; //Tamanho da string
-			aux = strndup(begin, len);
-			begin = end + 1; //Avança para o próximo
+		end = strstr(start, "\n"); //Procura o fim da linha
+		desc = end + 1;
+
+		if(end) {
+			aux = strndup(start + 1, end - start - 1);
 		} else {
-			aux = strdup(begin);
-			begin = NULL; //Para o ciclo
+			aux = strdup(start + 1);
 		}
 
 		insertDynaArray(cmds, aux);
+		start = end;
 	}
+	aux = strdup(desc);
+	insertDynaArray(descs, aux);
 }

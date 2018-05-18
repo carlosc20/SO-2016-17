@@ -10,6 +10,6 @@
 #include "struct.h"
 
 char *readFile(int fd);
-void separateCMD(DynaArray *cmds, char *cmd);
+void separateCMD(DynaArray *cmds, DynaArray *descs, char *cmd);
 
 #endif

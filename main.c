@@ -50,7 +50,7 @@ void execCMD(char *cmd){
 	int index;
 	switch(cmd[0]){
 		case ' ':
-			args = cmdArgs(cmd);
+			args = cmdArgs(cmd + 1);
 			execvp(args[0], args);
 			exit(1); // Não foi possivel executar o comando, dar KILL;
 			break;
@@ -119,14 +119,19 @@ int main(int argc, char *argv[]){
 
 	//Array Dynamico para guardar os comandos(incluindo a descriçao do mesmo cmd) e os resultados
 	DynaArray *cmds = createDynaArray(10);
+	DynaArray *descs = createDynaArray(10);
 	DynaArray *ans = createDynaArray(10);
 
 	//Le o ficheiro (notebook.txt) e insere no array cmds os comandos
-	separateCMD(cmds, readFile(fd));
+	separateCMD(cmds, descs, readFile(fd));
 
 	//Chamada um comando de cada vez usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);
 
+	printDynaArray(cmds);
+	printf("-----\n");
+	printDynaArray(descs);
+	printf("-----\n");
 	printDynaArray(ans);
 
 	close(fd);
