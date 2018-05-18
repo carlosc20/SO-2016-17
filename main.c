@@ -45,21 +45,35 @@ int openNoteBook(char *path){
 }
 
 
-void execCMD(char *cmd){
+void execCMD(DynaArray *pipes, char *cmd){
 	char **args;
 	int index;
+
+	int p[2];
+	pipe(p);
+	dup2(p[0], 0);
+
 	switch(cmd[0]){
 		case ' ':
 			args = cmdArgs(cmd + 1);
-			execvp(args[0], args);
-			exit(1); // Não foi possivel executar o comando, dar KILL;
 			break;
 		case '|':
-			sscanf(cmd, "|%d", &index);
+			args = cmdArgs(cmd + 2);
+			//Verificar erros!!!!
+			write(p[1], pipes->array[pipes->length - 1], strlen(pipes->array[pipes->length - 1])); //Pode ser melhorado
 			break;
 		default:
+			if(sscanf(cmd, "%d| %s", &index, cmd) == 2){
+				args = cmdArgs(cmd);
+				//Verificar erros!!!!
+				write(p[1], pipes->array[pipes->length - index], strlen(pipes->array[pipes->length - index])); //Pode ser melhorado
+			}
 			break;
 	}
+	close(p[1]);
+
+	execvp(args[0], args);
+	exit(1); // Não foi possivel executar o comando, dar KILL;
 }
 
 char *readPipe(int p){
@@ -67,7 +81,6 @@ char *readPipe(int p){
 	char *str;
 	int len = 0;
 	int rd;
-
 	while((rd = read(p, buff, BUFFER)) > 0){
 		if(len){
 			len += rd;
@@ -86,15 +99,13 @@ char *readPipe(int p){
 
 void callCMDS(DynaArray *cmds, DynaArray *ans){
 	int i = 0;
-	while(i < cmds->used){
+	while(i < cmds->length){
 		int p[2];
 		pipe(p);
 
 		if(fork()){
 			close(p[1]);
-
-			insertDynaArray(ans, readPipe(p[0]));
-
+			insertDynaArrayNoCpy(ans, readPipe(p[0]));
 			close(p[0]);
 		} else {
 
@@ -102,7 +113,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 			dup2(p[1],1);
 			close(p[1]);
 
-			execCMD(cmds->array[i]);
+			execCMD(ans, cmds->array[i]);
 
 			exit(1); //Não foi possivel executar o comando
 		}

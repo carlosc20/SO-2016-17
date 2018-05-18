@@ -7,12 +7,13 @@
 
 typedef struct DynaArr{
 	char **array;
-	int used;
+	int length;
 	int size;
 } DynaArray;
 
 DynaArray *createDynaArray(int size);
 void insertDynaArray(DynaArray *a, char *str);
+void insertDynaArrayNoCpy(DynaArray *a, char *str);
 void freeDynaArray(DynaArray *a);
 void printDynaArray(DynaArray *a);
 

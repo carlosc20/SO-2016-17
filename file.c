@@ -35,8 +35,8 @@ void separateCMD(DynaArray *cmds, DynaArray *descs, char *cmd){
 	char buff[BUFFER];
 
 	while(start && (start = strstr(start, "$"))){
-		aux = strndup(desc, start - desc); //Copia a descrição
-		insertDynaArray(descs, aux);
+		aux = strndup(desc, start - desc - 1); //Copia a descrição
+		insertDynaArrayNoCpy(descs, aux);
 
 		end = strstr(start, "\n"); //Procura o fim da linha
 		desc = end + 1;
@@ -47,9 +47,9 @@ void separateCMD(DynaArray *cmds, DynaArray *descs, char *cmd){
 			aux = strdup(start + 1);
 		}
 
-		insertDynaArray(cmds, aux);
+		insertDynaArrayNoCpy(cmds, aux);
 		start = end;
 	}
 	aux = strdup(desc);
-	insertDynaArray(descs, aux);
+	insertDynaArrayNoCpy(descs, aux);
 }
