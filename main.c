@@ -52,6 +52,7 @@ void execCMD(DynaArray *pipes, char *cmd){
 	int p[2];
 	pipe(p);
 	dup2(p[0], 0);
+	close(p[0]);
 
 	switch(cmd[0]){
 		case ' ':
