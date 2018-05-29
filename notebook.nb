@@ -1,0 +1,6 @@
+Este comando lista os ficheiros:
+$ ls -l
+Isto é uma merda:
+$| wc
+ggghg:
+$ ls

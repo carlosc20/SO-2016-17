@@ -56,10 +56,10 @@ void execCMD(DynaArray *pipes, char *cmd){
 
 	switch(cmd[0]){
 		case ' ':
-			args = cmdArgs(cmd + 1);
+			args = cmdArgs(cmd+1);
 			break;
 		case '|':
-			args = cmdArgs(cmd + 2);
+			args = cmdArgs(cmd+2);
 			//Verificar erros!!!!
 			write(p[1], pipes->array[pipes->length - 1], strlen(pipes->array[pipes->length - 1])); //Pode ser melhorado
 			break;
@@ -77,27 +77,6 @@ void execCMD(DynaArray *pipes, char *cmd){
 	exit(1); // Não foi possivel executar o comando, dar KILL;
 }
 
-char *readPipe(int p){
-	char buff[BUFFER];
-	char *str;
-	int len = 0;
-	int rd;
-	while((rd = read(p, buff, BUFFER)) > 0){
-		if(len){
-			len += rd;
-			str = realloc(str, len);
-			strncat(str, buff, rd);
-		} else {
-			len = rd;
-			str = strndup(buff, rd);
-		}
-	}
-	if(rd < 0){
-		//Algo correu mal
-	}
-	return str;
-}
-
 void callCMDS(DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	while(i < cmds->length){
@@ -106,7 +85,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 		if(fork()){
 			close(p[1]);
-			insertDynaArrayNoCpy(ans, readPipe(p[0]));
+			insertDynaArrayNoCpy(ans, readFile(p[0]));
 			close(p[0]);
 		} else {
 
@@ -133,17 +112,13 @@ int main(int argc, char *argv[]){
 	DynaArray *cmds = createDynaArray(10);
 	DynaArray *descs = createDynaArray(10);
 	DynaArray *ans = createDynaArray(10);
-
+	
 	//Le o ficheiro (notebook.txt) e insere no array cmds os comandos
 	separateCMD(cmds, descs, readFile(fd));
 
 	//Chamada um comando de cada vez usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);
 
-	printDynaArray(cmds);
-	printf("-----\n");
-	printDynaArray(descs);
-	printf("-----\n");
 	printDynaArray(ans);
 
 	close(fd);
