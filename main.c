@@ -112,15 +112,15 @@ int main(int argc, char *argv[]){
 	DynaArray *cmds = createDynaArray(10);
 	DynaArray *descs = createDynaArray(10);
 	DynaArray *ans = createDynaArray(10);
-	
+
 	//Le o ficheiro (notebook.txt) e insere no array cmds os comandos
 	separateCMD(cmds, descs, readFile(fd));
 
 	//Chamada um comando de cada vez usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);
 
-	printDynaArray(ans);
-
+	//printDynaArray(ans);
+	printDynaArray(descs);
 	close(fd);
 
 	return 0;

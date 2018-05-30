@@ -1,13 +1,13 @@
-#clean="make clean"
-#echo $clean
-#$clean
+clean="make clean"
+echo $clean
+$clean
 
-#making="make"
-#echo $make
-#$making
+making="make"
+echo $make
+$making
 
-#run="./Bash notebook.nb"
-#echo $run
-#$run
+run="./Bash notebook.nb"
+echo $run
+$run
 
-echo "Eu odeio o Daniel"
+

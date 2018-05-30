@@ -1,6 +1,18 @@
+>>>
+oi tudo bem?
+<<<
 Este comando lista os ficheiros:
 $ ls -l
 Isto é uma merda:
 $| wc -m
-ggghg:
+>>>
+oi tudo bem?
+<<<
+comentario
 $ ls
+fixe
+$2| wc -m
+>>>
+<<<
+<<<
+foo
