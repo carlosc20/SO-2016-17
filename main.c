@@ -25,26 +25,6 @@ char **cmdArgs(char *cmd){
 	return args;
 }
 
-
-
-
-void noArgs(int argc){
-	if(argc < 2){
-		fprintf(stderr, "use: Bash <path>\n");
-		exit(1);
-	}
-}
-
-int openNoteBook(char *path){
-	int fd;
-	if((fd = open(path, O_RDWR, 0644)) < 0){
-		write(2, "Error On Opening File!\n", 24);
-	}
-
-	return fd;
-}
-
-
 void execCMD(DynaArray *pipes, char *cmd){
 	char **args;
 	int index;
@@ -102,6 +82,81 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 	}
 }
 
+void creatSubstitute(char *notebook, char *str){
+	char *nb = strdup(notebook);
+
+	while(strstr(nb, "/")){
+		nb = strstr(nb, "/");
+		nb++;
+	}
+
+	char *path = strndup(notebook, strlen(notebook) - strlen(nb));
+
+	char *sub = malloc(strlen(path) + strlen(nb) + 4);
+	strcpy(sub, path);
+	strcat(sub, "TMP");
+	strcat(sub, nb);
+
+	int fd = open(sub, O_RDONLY, 0644);
+	if(fd < 0){
+		fd = open(sub, O_CREAT | O_RDWR, 0644);
+		if(write(fd, str, strlen(str)) < 0){
+			write(2, "Error on writing to TMP file!\n", 32);
+			if(unlink(sub)){
+				write(2, "Error!\n", 7);
+			}
+			exit(1);
+		}
+		if(unlink(notebook)){
+			write(2, "Error!\n", 7);
+			if(unlink(sub)){
+				write(2, "Error!\n", 7);
+			}
+			exit(2);
+		}
+		link(sub, notebook);
+		unlink(sub);
+
+	}
+}
+
+void subNoteBook(DynaArray *descs, DynaArray *cmds, DynaArray *ans, char *path){
+	int i=0;
+	char *str=malloc(1);
+
+	while(i<cmds->length){
+
+		str = realloc(str, strlen(str) + strlen(descs->array[i]) + strlen(cmds->array[i]) + strlen(ans->array[i]) + 9);
+
+		strcat(str, descs->array[i]);
+		strcat(str, cmds->array[i]);
+		strcat(str, "\n>>>\n");
+		strcat(str, ans->array[i]);
+		strcat(str, "<<<\n");
+
+		i++;
+	}
+
+	creatSubstitute(path, str);
+
+}
+
+int openNoteBook(char *path){
+	int fd;
+	if((fd = open(path, O_RDWR, 0644)) < 0){
+		write(2, "Error On Opening NoteBook!\n", 24);
+	}
+
+	return fd;
+}
+
+void noArgs(int argc){
+	if(argc < 2){
+		fprintf(stderr, "use: Bash <path>\n");
+		exit(1);
+	}
+}
+
 int main(int argc, char *argv[]){
 
 	noArgs(argc);
@@ -116,12 +171,15 @@ int main(int argc, char *argv[]){
 	//Le o ficheiro (notebook.txt) e insere no array cmds os comandos
 	separateCMD(cmds, descs, readFile(fd));
 
+	close(fd);
+
 	//Chamada um comando de cada vez usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);
 
+	subNoteBook(descs, cmds, ans, argv[1]);
+
 	//printDynaArray(ans);
-	printDynaArray(descs);
-	close(fd);
+	//printDynaArray(descs);
 
 	return 0;
 }

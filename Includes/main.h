@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "errno.h"
 
 #include "file.h"
 #include "struct.h"

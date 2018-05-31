@@ -1,18 +1,6 @@
->>>
-oi tudo bem?
-<<<
 Este comando lista os ficheiros:
-$ ls -l
-Isto é uma merda:
-$| wc -m
->>>
-oi tudo bem?
-<<<
-comentario
 $ ls
-fixe
-$2| wc -m
->>>
-<<<
-<<<
-foo
+Escolher o primeiro:
+$| head -1
+Conta chars:
+$| wc -m
