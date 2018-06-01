@@ -1,6 +1,12 @@
 #include "Includes/btree.h"
 
-BTree newNode(const char* value, BTree left, BTree right){
+typedef struct BinaryTree{
+    char* value;
+    struct BinaryTree* left;
+    struct BinaryTree* right;
+}* BTree;
+
+static BTree newNode(const char* value, BTree left, BTree right){
     BTree newTree = malloc(sizeof(struct BinaryTree));
     newTree->value = strdup(value);
     newTree->left = left;
@@ -16,7 +22,7 @@ static int isOperator(BTree tree){
     return tree->left != NULL || tree->right != NULL;
 }
 
-char* treeToString(BTree tree){
+static char* treeToString(BTree tree){
     if(tree == NULL){
         return "";
     } else {
@@ -30,7 +36,7 @@ char* treeToString(BTree tree){
     }
 }
 
-BTree stringToTree(const char* value){
+static BTree stringToTree(const char* value){
     char* split;
     char* oprs[] = {";", "&", "|", "&&", "||", "<", ">", NULL};
     char* opr;
@@ -42,6 +48,8 @@ BTree stringToTree(const char* value){
     }
     return newNode(value, NULL, NULL);
 }
+
+static void execTree(BTree tree);
 
 static void seq(BTree tree){
     if(fork()){
@@ -115,6 +123,38 @@ static void out(BTree tree){
     execTree(tree->left);
 }
 
+/*
+Recebe array de comando e argumentos
+
+Devolve array com tudo separado
+*/
+char **cmdArgs(char *cmd){
+	char *buff[128];
+	int i = 0;
+	char *str = strdup(cmd);
+
+	while(*str == ' '){
+		str++;
+	}
+
+	char *tok = strtok(str, " ");
+	while(tok){
+		buff[i] = tok;
+		tok = strtok(NULL, " ");
+		i++;
+	}
+
+	char **args = malloc(i * sizeof(char*));
+	int w = 0;
+
+	while(w < i){
+		args[w] = buff[w];
+		w++;
+	}
+
+	return args;
+}
+
 static void execTree(BTree tree){
     char* oprs[] = {";", "&", "&&", "||", "|", "<", ">", NULL};
     void (*funcs[])(BTree) = {seq, bg, and, or, pip, in, out, NULL};
@@ -125,12 +165,15 @@ static void execTree(BTree tree){
             }
         }
     } else {
-		//A fazer
-        execlp(tree->value, tree->value, NULL);
+		char **args;
+		args = cmdArgs(tree->value);
+
+		execvp(args[0], args);
     }
 }
 
-void execute(BTree tree){
+void execute(const char* string){
+	BTree tree = stringToTree(string);
     if(fork()){
         wait(NULL);
     } else {
