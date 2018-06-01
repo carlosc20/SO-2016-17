@@ -1,13 +1,11 @@
-clean="make clean"
+clean="rm Bash"
 echo $clean
 $clean
 
-making="make"
-echo $make
-$making
+compile="gcc -o Bash main.c file.c dynaArray.c"
+echo $compile
+$compile
 
 run="./Bash notebook.nb"
 echo $run
 $run
-
-

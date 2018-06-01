@@ -1,6 +1,11 @@
-#include "Includes/struct.h"
+#include "Includes/dynaArray.h"
+
+#define INC 	2
+
 
 DynaArray *createDynaArray(int size){
+	if(size <= 0) return NULL;
+
 	DynaArray *a;
 
 	a = malloc(sizeof(DynaArray));
@@ -11,27 +16,36 @@ DynaArray *createDynaArray(int size){
 	return a;
 }
 
-void insertDynaArray(DynaArray *a, char *str){
+
+static void increaseSize(DynaArray *a){
 	if (a->length == a->size){
-		a->size *= 2;
-    	a->array = (char **) realloc(a->array, a->size * sizeof(char*));
+    	char **tmp = realloc(a->array, a->size * sizeof(char*));
+		if(!tmp){
+  			fprintf(stderr, "Erro ao aumentar tamanho do array");
+		} else {
+  			a->array = tmp;
+  			a->size *= INC;
+		}	
 	}
+}
+
+void insertDynaArray(DynaArray *a, char *str){
+	increaseSize(a);
 	a->array[a->length++] = strdup(str);
 }
 
+
 void insertDynaArrayNoCpy(DynaArray *a, char *str){
-	if (a->length == a->size){
-		a->size *= 2;
-    	a->array = (char **) realloc(a->array, a->size * sizeof(char*));
-	}
+	increaseSize(a);
 	a->array[a->length++] = str;
 }
 
+
 void freeDynaArray(DynaArray *a){
-  free(a->array);
-  a->array = NULL;
-  a->length = a->length = 0;
+  	free(a->array);
+  	free(a);
 }
+
 
 void printDynaArray(DynaArray *a){
 	for(int i=0; i < a->length; i++){

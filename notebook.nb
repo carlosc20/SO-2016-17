@@ -1,18 +1,43 @@
+Este comando lista os ficheiros:
+$ ls
 >>>
-oi tudo bem?
+Bash
+dynaArray.c
+file.c
+Includes
+main.c
+Makefile
+notebook (copy).nb
+notebook.nb
+run.sh
+teste.c
+<<<
+Escolher o primeiro:
+$| head -1
+>>>
+Bash
 <<<
 Este comando lista os ficheiros:
-$ ls -l
-Isto é uma merda:
-$| wc -m
->>>
-oi tudo bem?
-<<<
-comentario
 $ ls
-fixe
-$2| wc -m
 >>>
+Bash
+dynaArray.c
+file.c
+Includes
+main.c
+Makefile
+notebook (copy).nb
+notebook.nb
+run.sh
+teste.c
 <<<
+Escolher o primeiro:
+$| head -1
+>>>
+Bash
 <<<
-foo
+Conta chars:
+$3| wc -m
+>>>
+5
+<<<

@@ -19,10 +19,11 @@ char *readFile(int fd){
 		}
 	}
 	if(rd < 0){
-		//Algo correu mal
+		fprintf(stderr, "Error on reading file\n");
 	}
 	return str;
 }
+
 
 //Recebe uma string e ignora o incio >>> até ao <<<
 char* filterAnswers(char* str){
@@ -63,7 +64,7 @@ void separateCMD(DynaArray *cmds, DynaArray *descs, char *cmd){
         insertDynaArrayNoCpy(cmds, aux); // Insere o comando no array dos comandos
         start = end; // Continua a procurar na próxima linha
 	}
-	desc = filterAnswears(desc); // Retorna o incio da descrição sem as respostas
+	desc = filterAnswers(desc); // Retorna o incio da descrição sem as respostas
     aux = strdup(desc); // Duplica a descrição
     insertDynaArrayNoCpy(descs, aux); // Insere a descrição no array das descrições
 }
