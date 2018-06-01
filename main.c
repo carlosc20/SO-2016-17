@@ -44,6 +44,31 @@ int openNoteBook(char *path){
 	return fd;
 }
 
+char *searchOPR(char* string, char* left, char* right){
+	char *aux;
+	if(aux = strstr(string, "&")){
+		left = strndup(string, aux - string);
+		right = strdup(aux);
+		return "&";
+	}
+	if(aux = strstr(string, "|")){
+		left = strndup(string, aux - string);
+		right = strndup(aux);
+		return "|"
+	}
+}
+
+BTree splitCMD(char* string){
+	char* opr;
+	char* left;
+	char* right;
+	opr = searchOPR(string, left, right);
+	if(opr){
+
+	} else {
+		return insertBTree()
+	}
+}
 
 void execCMD(DynaArray *pipes, char *cmd){
 	char **args;
