@@ -19,10 +19,11 @@ char *readFile(int fd){
 		}
 	}
 	if(rd < 0){
-		//Algo correu mal
+		fprintf(stderr, "Error on reading file\n");
 	}
 	return str;
 }
+
 
 //Recebe uma string e ignora o incio >>> até ao <<<
 char* filterAnswers(char* str){

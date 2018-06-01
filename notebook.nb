@@ -1,10 +1,43 @@
 Este comando lista os ficheiros:
 $ ls
+>>>
+Bash
+dynaArray.c
+file.c
+Includes
+main.c
+Makefile
+notebook (copy).nb
+notebook.nb
+run.sh
+teste.c
+<<<
 Escolher o primeiro:
 $| head -1
+>>>
+Bash
+<<<
 Este comando lista os ficheiros:
 $ ls
+>>>
+Bash
+dynaArray.c
+file.c
+Includes
+main.c
+Makefile
+notebook (copy).nb
+notebook.nb
+run.sh
+teste.c
+<<<
 Escolher o primeiro:
 $| head -1
+>>>
+Bash
+<<<
 Conta chars:
 $3| wc -m
+>>>
+5
+<<<

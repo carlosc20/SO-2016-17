@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "struct.h"
+#include "dynaArray.h"
 
 char *readFile(int fd);
 void separateCMD(DynaArray *cmds, DynaArray *descs, char *cmd);

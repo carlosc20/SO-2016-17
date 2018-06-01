@@ -9,6 +9,6 @@
 #include "errno.h"
 
 #include "file.h"
-#include "struct.h"
+#include "dynaArray.h"
 
 #endif

@@ -1,0 +1,10 @@
+Este comando lista os ficheiros:
+$ ls
+Escolher o primeiro:
+$| head -1
+Este comando lista os ficheiros:
+$ ls
+Escolher o primeiro:
+$| head -1
+Conta chars:
+$3| wc -m

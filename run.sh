@@ -2,7 +2,7 @@ clean="rm Bash"
 echo $clean
 $clean
 
-compile="gcc -o Bash main.c file.c struct.c"
+compile="gcc -o Bash main.c file.c dynaArray.c"
 echo $compile
 $compile
 
