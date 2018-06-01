@@ -7,8 +7,13 @@ char **cmdArgs(char *cmd){
 	char *buff[100];
 	char *tok;
 	int i = 0;
+	char *str = strdup(cmd);
 
-	tok = strtok(cmd, " ");
+	while(str[0] == ' '){
+		str++;
+	}
+
+	tok = strtok(str, " ");
 	while(tok){
 		buff[i] = tok;
 		tok = strtok(NULL, " ");
@@ -25,8 +30,9 @@ char **cmdArgs(char *cmd){
 	return args;
 }
 
-void execCMD(DynaArray *pipes, char *cmd){
+void execCMD(DynaArray *ans, char *cmd){
 	char **args;
+	char *str = strdup(cmd);
 	int index;
 
 	int p[2];
@@ -34,23 +40,27 @@ void execCMD(DynaArray *pipes, char *cmd){
 	dup2(p[0], 0);
 	close(p[0]);
 
-	switch(cmd[0]){
-		case ' ':
-			args = cmdArgs(cmd+1);
-			break;
-		case '|':
-			args = cmdArgs(cmd+2);
-			//Verificar erros!!!!
-			write(p[1], pipes->array[pipes->length - 1], strlen(pipes->array[pipes->length - 1])); //Pode ser melhorado
-			break;
-		default:
-			if(sscanf(cmd, "%d| %s", &index, cmd) == 2){
-				args = cmdArgs(cmd);
-				//Verificar erros!!!!
-				write(p[1], pipes->array[pipes->length - index], strlen(pipes->array[pipes->length - index])); //Pode ser melhorado
-			}
-			break;
+	while(str[0] == ' '){
+		str++;
 	}
+
+	if(sscanf(str, "%d|", &index) == 1){
+		str=strstr(str, "|");
+		args = cmdArgs(str + 1);
+		//Verificar erros!!!!
+		write(p[1], ans->array[ans->length - index], strlen(ans->array[ans->length - index]));
+	}
+	else{
+		if(str[0] == '|'){
+			args = cmdArgs(str + 1);
+			//Verificar erros!!!!
+			write(p[1], ans->array[ans->length - 1], strlen(ans->array[ans->length - 1]));
+		}
+		else{
+			args = cmdArgs(str);
+		}
+	}
+
 	close(p[1]);
 
 	execvp(args[0], args);
@@ -103,20 +113,26 @@ void creatSubstitute(char *notebook, char *str){
 		if(write(fd, str, strlen(str)) < 0){
 			write(2, "Error on writing to TMP file!\n", 32);
 			if(unlink(sub)){
-				write(2, "Error!\n", 7);
+				write(2, "Error on Deleting TMP file!\n", 7);
 			}
 			exit(1);
 		}
+
 		if(unlink(notebook)){
-			write(2, "Error!\n", 7);
+			write(2, "Error on Deleting notebook file!\n", 7);
 			if(unlink(sub)){
-				write(2, "Error!\n", 7);
+				write(2, "Error on Deleting TMP file!\n", 7);
 			}
 			exit(2);
 		}
-		link(sub, notebook);
-		unlink(sub);
 
+		if(link(sub, notebook)){
+			write(2, "Error on Renaming TMP file!\n", 7);
+		}
+
+		if(unlink(sub)){
+			write(2, "Error on Deleting TMP file!\n", 7);
+		}
 	}
 }
 
@@ -126,9 +142,10 @@ void subNoteBook(DynaArray *descs, DynaArray *cmds, DynaArray *ans, char *path){
 
 	while(i<cmds->length){
 
-		str = realloc(str, strlen(str) + strlen(descs->array[i]) + strlen(cmds->array[i]) + strlen(ans->array[i]) + 9);
+		str = realloc(str, strlen(str) + strlen(descs->array[i]) + strlen(cmds->array[i]) + strlen(ans->array[i]) + 10);
 
 		strcat(str, descs->array[i]);
+		strcat(str, "$");
 		strcat(str, cmds->array[i]);
 		strcat(str, "\n>>>\n");
 		strcat(str, ans->array[i]);
@@ -175,11 +192,8 @@ int main(int argc, char *argv[]){
 
 	//Chamada um comando de cada vez usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);
-
+	
 	subNoteBook(descs, cmds, ans, argv[1]);
-
-	//printDynaArray(ans);
-	//printDynaArray(descs);
 
 	return 0;
 }

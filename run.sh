@@ -1,11 +1,11 @@
 clean="rm Bash"
-#echo $clean
+echo $clean
 $clean
 
 compile="gcc -o Bash main.c file.c struct.c"
-#echo $compile
+echo $compile
 $compile
 
-run="./Bash ../notebook.nb"
-#echo $run
+run="./Bash notebook.nb"
+echo $run
 $run
