@@ -13,17 +13,18 @@ int main(){
 		str++;
 	}
 
-	while(str){
+	while(str[0] != '\0'){
 		if(str[0] == ' '){
-			aux=strdup(buff);
 			str++;
+			aux=strndup(buff, i);
+			i=0;
 			printf("%s\n", aux);
-			//args = realloc(args, sizeof());
-			continue;
 		}
-
-		buff[i]=str[0];
-		str++;
+		else{
+			buff[i]=str[0];
+			i++;
+			str++;
+		}
 	}
 
 	return 0;

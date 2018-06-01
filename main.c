@@ -130,9 +130,9 @@ void replaceNotebook(char *notebook, char *str){
 	strcat(sub, "TMP");
 	strcat(sub, nb);
 
-	int fd = open(sub, O_CREAT | O_WRONLY, 0644);
+	int fd = open(sub, O_WRONLY, 0644);
 	if(fd < 0){
-
+		fd = open(sub, O_CREAT | O_RDWR, 0644);
 		if(write(fd, str, strlen(str)) < 0){
 			write(2, "Error on writing to TMP file!\n", 32);
 			if(unlink(sub)){
