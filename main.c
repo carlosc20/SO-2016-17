@@ -1,43 +1,11 @@
 #include "Includes/main.h"
+#include "Includes/btree.h"
 #include <sys/wait.h>
 
 #include <signal.h>
 #include <sys/types.h>
 
 #define BUFFER 512
-
-
-/*
-Recebe array de comando e argumentos
-
-Devolve array com tudo separado
-*/
-char **cmdArgs(char *cmd){
-	char *buff[128];
-	int i = 0;
-	char *str = strdup(cmd);
-
-	while(*str == ' '){
-		str++;
-	}
-
-	char *tok = strtok(str, " ");
-	while(tok){
-		buff[i] = tok;
-		tok = strtok(NULL, " ");
-		i++;
-	}
-
-	char **args = malloc(i * sizeof(char*));
-	int w = 0;
-
-	while(w < i){
-		args[w] = buff[w];
-		w++;
-	}
-
-	return args;
-}
 
 void noArgs(int argc){
 	if(argc < 2){
@@ -56,8 +24,8 @@ int openNoteBook(char *path){
 }
 
 void execCMD(DynaArray *ans, char *cmd){
-	char **args;
 	char *str = strdup(cmd);
+	char *string = str;
 	int index;
 
 	int p[2];
@@ -70,26 +38,19 @@ void execCMD(DynaArray *ans, char *cmd){
 	}
 
 	if(sscanf(str, "%d|", &index) == 1){
-		str = strstr(str, "|");
-		args = cmdArgs(str + 1);
+		str = strstr(str, "|") + 1;
 		//Verificar erros!!!!
 		write(p[1], ans->array[ans->length - index], strlen(ans->array[ans->length - index]));
-	}
-	else{
-		if(str[0] == '|'){
-			args = cmdArgs(str + 1);
-			//Verificar erros!!!!
-			write(p[1], ans->array[ans->length - 1], strlen(ans->array[ans->length - 1]));
-		}
-		else{
-			args = cmdArgs(str);
-		}
+	} else if(str[0] == '|'){
+		str++;
+		//Verificar erros!!!!
+		write(p[1], ans->array[ans->length - 1], strlen(ans->array[ans->length - 1]));
 	}
 
 	close(p[1]);
 
-	execvp(args[0], args);
-	exit(1); // Não foi possivel executar o comando, dar KILL;
+	execute(string);
+	free(string);
 }
 
 void callCMDS(DynaArray *cmds, DynaArray *ans){
