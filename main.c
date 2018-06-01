@@ -69,7 +69,6 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 		int p[2];
 		int status;
 		pipe(p);
-
 		if(fork()){
 			wait(&status);
 			if(status != 0){
@@ -86,10 +85,8 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 			execCMD(ans, cmds->array[i]);
 
-			exit(1); //Não foi possivel executar o comando
+			exit(0); //Não foi possivel executar o comando
 		}
-
-		i++;
 	}
 }
 
