@@ -70,10 +70,20 @@ void execCMD(DynaArray *ans, char *cmd){
 	}
 
 	if(sscanf(str, "%d|", &index) == 1){
-		str = strstr(str, "|");
-		args = cmdArgs(str + 1);
-		//Verificar erros!!!!
-		write(p[1], ans->array[ans->length - index], strlen(ans->array[ans->length - index]));
+		if(index > ans->length){
+			char *error=malloc(31 + strlen(str));
+			strcpy(error, "Error on executing command: $");
+			strcat(error, str);
+			strcat(error, "\n");
+			write(2, error, strlen(error));
+			exit(1);
+		}
+		else{
+			str = strstr(str, "|");
+			args = cmdArgs(str + 1);
+			//Verificar erros!!!!
+			write(p[1], ans->array[ans->length - index], strlen(ans->array[ans->length - index]));
+		}
 	}
 	else{
 		if(str[0] == '|'){
@@ -96,9 +106,14 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	while(i < cmds->length){
 		int p[2];
+		int status;
 		pipe(p);
 
 		if(fork()){
+			wait(&status);
+			if(status != 0){
+				exit(2);
+			} 
 			close(p[1]);
 			insertDynaArrayNoCpy(ans, readFile(p[0]));
 			close(p[0]);
@@ -150,27 +165,27 @@ void replaceNotebook(char *notebook, char *str){
 	if(fd < 0){
 		fd = open(sub, O_CREAT | O_RDWR, 0644);
 		if(write(fd, str, strlen(str)) < 0){
-			write(2, "Error on writing to TMP file!\n", 32);
+			write(2, "Error on writing to TMP file!\n", 31);
 			if(unlink(sub)){
-				write(2, "Error on Deleting TMP file!\n", 7);
+				write(2, "Error on Deleting TMP file!\n", 29);
 			}
 			exit(1);
 		}
-
+		
 		if(unlink(notebook)){
-			write(2, "Error on Deleting notebook file!\n", 7);
+			write(2, "Error on Deleting notebook file!\n", 34);
 			if(unlink(sub)){
-				write(2, "Error on Deleting TMP file!\n", 7);
+				write(2, "Error on Deleting TMP file!\n", 29);
 			}
 			exit(2);
 		}
 
 		if(link(sub, notebook)){
-			write(2, "Error on Renaming TMP file!\n", 7);
+			write(2, "Error on Renaming TMP file!\n", 29);
 		}
 
 		if(unlink(sub)){
-			write(2, "Error on Deleting TMP file!\n", 7);
+			write(2, "Error on Deleting TMP file!\n", 29);
 		}
 	}
 }

@@ -29,11 +29,6 @@ static void increaseSize(DynaArray *a){
 	}
 }
 
-void insertDynaArray(DynaArray *a, char *str){
-	increaseSize(a);
-	a->array[a->length++] = strdup(str);
-}
-
 
 void insertDynaArrayNoCpy(DynaArray *a, char *str){
 	increaseSize(a);
