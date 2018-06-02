@@ -47,7 +47,7 @@ void execCMD(DynaArray *ans, char *cmd){
 	close(p[1]);
 
 	pipe(p);
-	//dup2(p[0], 2);
+	dup2(p[0], 2);
 
 	execute(str);
 	if(read(p[1], NULL, 1) > 0){ //ve se o comando escreveu para o stderr
@@ -113,58 +113,51 @@ void replaceNotebook(char *notebook, char *str){
 
 	char *path = strndup(notebook, strlen(notebook) - strlen(nb));
 
-	char *sub = malloc(strlen(path) + strlen(nb) + 4);
+	char *sub = malloc(strlen(path) + strlen(nb) + 5);
 	strcpy(sub, path);
-	strcat(sub, "TMP");
+	strcat(sub, ".TMP");
 	strcat(sub, nb);
 	free(nb);
 	free(path);
 
-	int fd = open(sub, O_WRONLY, 0644);//verifica se ja existe ficheiro com o nome
-	close(fd);
-	if(fd < 0){
-		signal(SIGINT, sighandler);
+	signal(SIGINT, sighandler);
 
-		//cria novo nb processado -> sub
-		fd = open(sub, O_CREAT | O_WRONLY, 0644);
+	//cria novo nb processado -> sub
+	int fd = open(sub, O_CREAT | O_WRONLY, 0644);
 
-
-		if(write(fd, str, strlen(str)) < 0){
-			free(str);
-			write(2, "Error on writing to TMP file!\n", 31);
-			deleteNotebook(sub);
-			exit(1);
-		}
-
-		//existe novo e original -> em caso de interrupção apaga o novo
-		if(FLAG){
-			deleteNotebook(sub);
-			exit(3);
-		}
-
-
-		//apaga antigo
-		if(unlink(notebook)){
-			write(2, "Error on deleting notebook file!\n", 34);
-			deleteNotebook(sub);
-			exit(2);
-		}
-
-		//existe só novo
-		//neste ponto o interrupt é ignorado para evitar perda de dados
-
-		//muda nome do ficheiro
-		if(link(sub, notebook)){
-			write(2, "Error on renaming TMP file!\n", 29);
-		}
-
-		//apaga novo
+	if(write(fd, str, strlen(str)) < 0){
+		free(str);
+		write(2, "Error on writing to TMP file!\n", 31);
 		deleteNotebook(sub);
-
-		signal(SIGINT, SIG_DFL);
-
-		free(sub);
+		exit(1);
 	}
+	//existe novo e original -> em caso de interrupção apaga o novo
+	if(FLAG){
+		deleteNotebook(sub);
+		exit(3);
+	}
+
+
+	//apaga antigo
+	if(unlink(notebook)){
+		write(2, "Error on deleting notebook file!\n", 34);
+		deleteNotebook(sub);
+		exit(2);
+	}
+
+	//existe só novo
+	//neste ponto o interrupt é ignorado para evitar perda de dados
+	//muda nome do ficheiro
+	if(link(sub, notebook)){
+		write(2, "Error on renaming TMP file!\n", 29);
+	}
+
+	//apaga novo
+	deleteNotebook(sub);
+
+	signal(SIGINT, SIG_DFL);
+
+	free(sub);
 }
 
 //junta as Strings numa só
@@ -172,16 +165,24 @@ char *combine(DynaArray *descs, DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	char *str = malloc(1);
 
-	while(i < cmds->length){
+	while(i < cmds->length || i < descs->length || i < ans->length){
+		if(i < descs->length){
+			str = realloc(str, strlen(str) + strlen(descs->array[i]));
+			strcat(str, descs->array[i]);
+		}
 
-		str = realloc(str, strlen(str) + strlen(descs->array[i]) + strlen(cmds->array[i]) + strlen(ans->array[i]) + 10);
+		if(i < cmds->length){
+			str = realloc(str, strlen(str) + strlen(cmds->array[i]) + 1);
+			strcat(str, "$");
+			strcat(str, cmds->array[i]);
+		}
 
-		strcat(str, descs->array[i]);
-		strcat(str, "$");
-		strcat(str, cmds->array[i]);
-		strcat(str, "\n>>>\n");
-		strcat(str, ans->array[i]);
-		strcat(str, "<<<\n");
+		if(i < ans->length){
+			str = realloc(str, strlen(str) + strlen(ans->array[i]) + 9);
+			strcat(str, "\n>>>\n");
+			strcat(str, ans->array[i]);
+			strcat(str, "<<<\n");
+		}
 
 		i++;
 	}
@@ -198,7 +199,6 @@ int openNotebook(char *path){
 
 
 int main(int argc, char *argv[]){
-
 	if(argc < 2){
 		fprintf(stderr, "use: Bash <path>\n");
 		exit(1);
@@ -213,6 +213,7 @@ int main(int argc, char *argv[]){
 	int fd = openNotebook(argv[1]);
 	separateCMD(cmds, descs, readFile(fd));
 	close(fd);
+
 
 	//Chamada um comando de cada vez ordenadamente usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);

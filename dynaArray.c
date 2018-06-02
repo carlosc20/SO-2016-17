@@ -19,13 +19,12 @@ DynaArray *createDynaArray(int size){
 
 static void increaseSize(DynaArray *a){
 	if (a->length == a->size){
-		a->size *= 2;
+		a->size *= INC;
     	char **tmp = realloc(a->array, a->size * sizeof(char*));
 		if(!tmp){
   			fprintf(stderr, "Erro ao aumentar tamanho do array");
 		} else {
   			a->array = tmp;
-  			a->size *= INC;
 		}
 	}
 }
