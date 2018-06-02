@@ -45,7 +45,7 @@ static char* treeToString(BTree tree){
 
 static BTree stringToTree(const char* string){
     char* value = strdup(string);
-    char* oprs[] = {"&&", "||", ";", "&", "|", "<", ">", NULL}; // Comandos com mais caracter primeiro
+    char* oprs[] = {"&&", "||", ">>", ";", "&", "|", "<", ">", NULL}; // Comandos com mais caracter primeiro
     char* split = NULL;
     char* auxSplit;
     char* opr = NULL;
@@ -145,7 +145,14 @@ static void in(BTree tree){
 }
 
 static void out(BTree tree){
-    int f = open(tree->right->value, O_CREAT | O_WRONLY, 0644);
+    int f = open(tree->right->value, O_CREAT | O_WRONLY, 0666);
+    dup2(f, 1);
+    close(f);
+    execTree(tree->left);
+}
+
+static void app(BTree tree){
+    int f = open(tree->right->value, O_CREAT | O_WRONLY | O_APPEND, 0666);
     dup2(f, 1);
     close(f);
     execTree(tree->left);
@@ -184,8 +191,8 @@ char **cmdArgs(char *cmd){
 }
 
 static void execTree(BTree tree){
-    char* oprs[] = {";", "&", "&&", "||", "|", "<", ">", NULL};
-    void (*funcs[])(BTree) = {seq, bg, and, or, pip, in, out, NULL};
+    char* oprs[] = {"&&", "||", ">>", ";", "&", "|", "<", ">", NULL};
+    void (*funcs[])(BTree) = {and, or, app, seq, bg, pip, in, out, NULL};
     if(isOperator(tree)){
         for(int i = 0; oprs[i]; i++){
             if(strcmp(tree->value, oprs[i]) == 0){

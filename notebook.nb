@@ -2,13 +2,13 @@ Este comando lista os ficheiros:
 $ false || ls 
 >>>
 a.out
-a.txt
 Bash
 btree.c
 dynaArray.c
 exemplos
 file.c
 Includes
+ls.txt
 main.c
 Makefile
 notebook.nb
@@ -21,15 +21,15 @@ Escolher o primeiro e contar o numero de caracteres do notebook enquanto faz ls:
 $| head -1 | wc -m && ls & wc -m < notebook.nb
 >>>
 6
-473
+493
 a.out
-a.txt
 Bash
 btree.c
 dynaArray.c
 exemplos
 file.c
 Includes
+ls.txt
 main.c
 Makefile
 notebook.nb
@@ -41,5 +41,9 @@ teste.c
 Conta chars:
 $2| wc -m || echo NA
 >>>
-117
+118
+<<<
+$ ls >> ls.txt
+>>>
+118
 <<<
