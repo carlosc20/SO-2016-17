@@ -52,7 +52,7 @@ void execCMD(DynaArray *ans, char *cmd){
 	execute(str);
 
 	if(read(p[1], NULL, 1) > 0){ //ve se o comando escreveu para o stderr
-		write(2, "aaaaaaaaaaaaaaaa\n", 17);
+		write(1, "aaaaaaaaaaaaaaaa\n", 17);
 		exit(1);
 	}
 	close(p[0]);
