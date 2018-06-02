@@ -70,8 +70,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 		if(fork()){
 			wait(&status);
-			printf("%d\n", status);
-			if(status){
+			if(WEXITSTATUS(status)==5){
 				exit(2);
 			}
 
@@ -173,16 +172,24 @@ char *combine(DynaArray *descs, DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	char *str = malloc(1);
 
-	while(i < cmds->length){
+	while(i < cmds->length || i < descs->length || i < ans->length){
+		if(i < descs->length){
+			str = realloc(str, strlen(str) + strlen(descs->array[i]));
+			strcat(str, descs->array[i]);
+		}
 
-		str = realloc(str, strlen(str) + strlen(descs->array[i]) + strlen(cmds->array[i]) + strlen(ans->array[i]) + 10);
-
-		strcat(str, descs->array[i]);
-		strcat(str, "$");
-		strcat(str, cmds->array[i]);
-		strcat(str, "\n>>>\n");
-		strcat(str, ans->array[i]);
-		strcat(str, "<<<\n");
+		if(i < cmds->length){
+			str = realloc(str, strlen(str) + strlen(cmds->array[i]) + 1);
+			strcat(str, "$");
+			strcat(str, cmds->array[i]);
+		}
+		
+		if(i < ans->length){
+			str = realloc(str, strlen(str) + strlen(ans->array[i]) + 9);
+			strcat(str, "\n>>>\n");
+			strcat(str, ans->array[i]);
+			strcat(str, "<<<\n");
+		}
 
 		i++;
 	}
@@ -214,6 +221,7 @@ int main(int argc, char *argv[]){
 	int fd = openNotebook(argv[1]);
 	separateCMD(cmds, descs, readFile(fd));
 	close(fd);
+
 
 	//Chamada um comando de cada vez ordenadamente usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
 	callCMDS(cmds, ans);
