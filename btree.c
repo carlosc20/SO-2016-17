@@ -6,6 +6,7 @@ typedef struct BinaryTree{
     struct BinaryTree* right;
 }* BTree;
 
+//Cria um novo nodo
 static BTree newNode(const char* value, BTree left, BTree right){
     BTree newTree = malloc(sizeof(struct BinaryTree));
     newTree->value = strdup(value);
@@ -14,6 +15,7 @@ static BTree newNode(const char* value, BTree left, BTree right){
     return newTree;
 }
 
+//Dá free da árvore
 static void freeTree(BTree tree){
     if(tree){
         freeTree(tree->left);
@@ -23,28 +25,17 @@ static void freeTree(BTree tree){
     }
 }
 
+//Verifica se o nodo é um programa
 static int isProgram(BTree tree){
     return tree->left == NULL && tree->right == NULL;
 }
 
+//Verifica se o nodo é um operador
 static int isOperator(BTree tree){
     return tree->left != NULL || tree->right != NULL;
 }
 
-static char* treeToString(BTree tree){
-    if(tree == NULL){
-        return "";
-    } else {
-        char* result = malloc(sizeof(1024));
-        char* left = treeToString(tree->left);
-        char* right = treeToString(tree->right);
-        strncat(result, left, 1024);
-        strncat(result, tree->value, 1024);
-        strncat(result, right, 1024);
-        return result;
-    }
-}
-
+//Retorna uma string sem os espaços iniciais
 static char* skipSpaces(char* string){
     char *newString = string;
     while(*newString == ' '){
@@ -53,6 +44,7 @@ static char* skipSpaces(char* string){
     return newString;
 }
 
+//Converte uma string da bash numa árvore binária de operadores
 static BTree stringToTree(const char* string){
     char* value = strdup(string);
     char* oprs[] = {"&&", "||", ">>", ";", "&", "|", "<", ">", NULL}; // Comandos com mais caracter primeiro
@@ -89,6 +81,7 @@ static BTree stringToTree(const char* string){
 
 static void execTree(BTree tree);
 
+//O comando do lado direito da árvore é executado depois do comando do lado esquerdo
 static void seq(BTree tree){
     if(fork()){
         wait(NULL);
@@ -98,6 +91,7 @@ static void seq(BTree tree){
     }
 }
 
+//Os comandos do lado esquerdo e direito da árvore são executados em paralelo
 static void bg(BTree tree){
     if(fork()){
         execTree(tree->right);
@@ -106,6 +100,7 @@ static void bg(BTree tree){
     }
 }
 
+//Se o comando do lado esquerdo da árvore emitir um erro, o comando do lado direito não é executado
 static void and(BTree tree){
     if(fork()){
         int status;
@@ -118,6 +113,7 @@ static void and(BTree tree){
     }
 }
 
+//Se o comando do lado esquerdo da árvore emitir um erro, o comando do lado direito é executado
 static void or(BTree tree){
     if(fork()){
         int status = 1;
@@ -130,6 +126,7 @@ static void or(BTree tree){
     }
 }
 
+//O resultado do lado esquerdo da árvore é passado como stdin ao lado direito da árvore
 static void pip(BTree tree){
     int p[2];
     pipe(p);
@@ -147,6 +144,7 @@ static void pip(BTree tree){
     }
 }
 
+//O resultado do lado esquerdo da árvore recebe como stdin o ficheiro no lado direito da árvore
 static void in(BTree tree){
     char* file = skipSpaces(tree->right->value);
     int f = open(file, O_RDONLY);
@@ -155,6 +153,7 @@ static void in(BTree tree){
     execTree(tree->left);
 }
 
+//O resultado do lado esquerdo da árvore é escrito no ficheiro no lado direito da árvore
 static void out(BTree tree){
     char* file = skipSpaces(tree->right->value);
     int f = open(file, O_CREAT | O_WRONLY, 0644);
@@ -163,6 +162,7 @@ static void out(BTree tree){
     execTree(tree->left);
 }
 
+//O resultado do lado esquerdo da árvore é adicionado ao fim do ficheiro no lado direito da árvore
 static void app(BTree tree){
     char* file = skipSpaces(tree->right->value);
     int f = open(file, O_CREAT | O_WRONLY | O_APPEND, 0644);
@@ -200,6 +200,7 @@ char **cmdArgs(char *cmd){
 	return args;
 }
 
+//Executa a arvore binária de operadores
 static void execTree(BTree tree){
     char* oprs[] = {"&&", "||", ">>", ";", "&", "|", "<", ">", NULL};
     void (*funcs[])(BTree) = {and, or, app, seq, bg, pip, in, out, NULL};
@@ -216,6 +217,7 @@ static void execTree(BTree tree){
     }
 }
 
+// Executa os comandos da string
 void execute(const char* string){
 	BTree tree = stringToTree(string);
     if(fork()){

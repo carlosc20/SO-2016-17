@@ -9,6 +9,7 @@
 
 int FLAG = 0;
 
+//Executa o comando cmd e adiciona o resultado ao ans
 void execCMD(DynaArray *ans, char *cmd){
 	char *str = strdup(cmd);
 	char *string = str;
@@ -61,6 +62,7 @@ void execCMD(DynaArray *ans, char *cmd){
 	free(string);
 }
 
+//Executa os comandos do cmds e adicionando os seus resultados ao ans
 void callCMDS(DynaArray *cmds, DynaArray *ans){
 	for(int i = 0; i < cmds->length; i++){
 		int p[2];
