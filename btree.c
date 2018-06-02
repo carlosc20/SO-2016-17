@@ -15,10 +15,12 @@ static BTree newNode(const char* value, BTree left, BTree right){
 }
 
 static void freeTree(BTree tree){
-    freeTree(tree->left);
-    freeTree(tree->right);
-    free(tree->value);
-    free(tree);
+    if(tree){
+        freeTree(tree->left);
+        freeTree(tree->right);
+        free(tree->value);
+        free(tree);
+    }
 }
 
 static int isProgram(BTree tree){

@@ -57,10 +57,10 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 		if(fork()){
 			wait(&status);
-			if(WEXITSTATUS(status) == 5){
+			if(status){
 				exit(2);
 			}
-			
+
 			close(p[1]);
 			insertDynaArrayNoCpy(ans, readFile(p[0]));
 			close(p[0]);
@@ -71,7 +71,6 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 			close(p[1]);
 
 			execCMD(ans, cmds->array[i]);
-			fprintf(stderr, "ola\n");
 			exit(0);
 		}
 	}
@@ -111,7 +110,7 @@ void replaceNotebook(char *notebook, char *str){
 	int fd = open(sub, O_WRONLY, 0644);//verifica se ja existe ficheiro com o nome
 	close(fd);
 	if(fd < 0){
-		signal(SIGINT, sighandler); 
+		signal(SIGINT, sighandler);
 
 		//cria novo nb processado -> sub
 		fd = open(sub, O_CREAT | O_WRONLY, 0644);
@@ -129,7 +128,7 @@ void replaceNotebook(char *notebook, char *str){
 			exit(3);
 		}
 
-		
+
 		//apaga antigo
 		if(unlink(notebook)){
 			write(2, "Error on deleting notebook file!\n", 34);

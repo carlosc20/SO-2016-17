@@ -8,6 +8,7 @@ dynaArray.c
 exemplos
 file.c
 Includes
+ls.txt
 main.c
 Makefile
 notebook.nb
@@ -19,7 +20,7 @@ Escolher o primeiro e contar o numero de caracteres do notebook enquanto faz ls:
 $| head -1 | wc -m && ls & wc -m < notebook.nb
 >>>
 6
-507
+233
 a.out
 Bash
 btree.c
@@ -27,6 +28,7 @@ dynaArray.c
 exemplos
 file.c
 Includes
+ls.txt
 main.c
 Makefile
 notebook.nb
@@ -37,9 +39,9 @@ sort
 Conta chars:
 $2| wc -m || echo NA
 >>>
-103
+110
 <<<
-$ ls >> ls.txt
+$ echo TESTE >> ls.txt
 >>>
-103
+110
 <<<
