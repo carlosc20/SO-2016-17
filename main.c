@@ -51,7 +51,6 @@ void execCMD(DynaArray *ans, char *cmd){
 
 	execute(str);
 	if(read(p[1], NULL, 1) > 0){ //ve se o comando escreveu para o stderr
-		write(2, "aaaaaaaaaaaaaaaa\n", 17);
 		exit(1);
 	}
 
@@ -89,6 +88,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 	}
 }
 
+
 void sighandler(int sig) {
 	FLAG = 1;
 }
@@ -120,7 +120,7 @@ void replaceNotebook(char *notebook, char *str){
 	free(nb1);
 	free(path);
 
-	signal(SIGINT, sighandler);
+	signal(SIGINT, sighandler); //muda a resposta ao sinal de interrupção para evitar a perda de dados
 
 	//cria novo nb processado -> sub
 	int fd = open(sub, O_CREAT | O_WRONLY, 0644);
@@ -146,7 +146,8 @@ void replaceNotebook(char *notebook, char *str){
 	}
 
 	//existe só novo
-	//neste ponto o interrupt é ignorado para evitar perda de dados
+	//neste ponto as interrupções são ignoradas para evitar perda de dados
+
 	//muda nome do ficheiro
 	if(link(sub, notebook)){
 		write(2, "Error on renaming TMP file!\n", 29);
@@ -155,7 +156,7 @@ void replaceNotebook(char *notebook, char *str){
 	//apaga novo
 	deleteNotebook(sub);
 
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, SIG_DFL); //reverte as interrupções para o comportamento normal
 
 	free(sub);
 }
@@ -200,7 +201,7 @@ int openNotebook(char *path){
 
 int main(int argc, char *argv[]){
 	if(argc < 2){
-		fprintf(stderr, "use: Bash <path>\n");
+		write(2, "use: Bash <path>\n", 19);
 		exit(1);
 	}
 
@@ -209,13 +210,13 @@ int main(int argc, char *argv[]){
 	DynaArray *descs = createDynaArray(10);
 	DynaArray *ans = createDynaArray(10);
 
-	//Le o ficheiro (notebook.txt) e insere no array cmds os comandos
+	//Le o ficheiro e insere no array cmds os comandos
 	int fd = openNotebook(argv[1]);
 	separateCMD(cmds, descs, readFile(fd));
 	close(fd);
 
 
-	//Chamada um comando de cada vez ordenadamente usando o fork e executa-o, escrevendo o resultado num array dinamico (ans)
+	//Chama um comando de cada vez ordenadamente usando o fork e executa-o, e guarda o resultado no array ans
 	callCMDS(cmds, ans);
 
 	//cria um notebook com as respostas que depois substitui o original
