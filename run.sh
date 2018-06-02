@@ -1,8 +1,8 @@
-clean="rm notebook"
+clean="make clean"
 echo $clean
 $clean
 
-compile="gcc -o notebook main.c file.c dynaArray.c btree.c"
+compile="make"
 echo $compile
 $compile
 

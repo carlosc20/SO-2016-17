@@ -1,5 +1,5 @@
-bash:
-	gcc -o Bash main.c file.c dynaArray.c btree.c
+make:
+	gcc -o notebook main.c file.c dynaArray.c btree.c
 
 clean:
-	rm Bash
+	rm notebook
