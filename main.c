@@ -64,16 +64,17 @@ void execCMD(DynaArray *ans, char *cmd){
 }
 
 void callCMDS(DynaArray *cmds, DynaArray *ans){
-	int i = 0;
-	while(i < cmds->length){
+	for(int i = 0; i < cmds->length; i++){
 		int p[2];
 		int status;
 		pipe(p);
+
 		if(fork()){
 			wait(&status);
 			if(status != 0){
 				exit(2);
 			}
+
 			close(p[1]);
 			insertDynaArrayNoCpy(ans, readFile(p[0]));
 			close(p[0]);
@@ -85,7 +86,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 			execCMD(ans, cmds->array[i]);
 
-			exit(0); //Não foi possivel executar o comando
+			exit(0);
 		}
 	}
 }
