@@ -34,32 +34,33 @@ void execCMD(DynaArray *ans, char *cmd){
 		} else {
 			str = strstr(str, "|");
 			str++;
-			//Verificar erros!!!!
+
 			write(p[1], ans->array[ans->length - index], strlen(ans->array[ans->length - index]));
 		}
 	} else if(str[0] == '|'){
 		str++;
-		//Verificar erros!!!!
+
 		write(p[1], ans->array[ans->length - 1], strlen(ans->array[ans->length - 1]));
 	}
 
 	close(p[1]);
-
-	execute(string);
+	fprintf(stderr, "%s\n", str);
+	execute(str);
 	free(string);
 }
 
 void callCMDS(DynaArray *cmds, DynaArray *ans){
-	int i = 0;
-	while(i < cmds->length){
+	for(int i = 0; i < cmds->length; i++){
 		int p[2];
 		int status;
 		pipe(p);
+
 		if(fork()){
 			wait(&status);
 			if(status != 0){
 				exit(2);
 			}
+
 			close(p[1]);
 			insertDynaArrayNoCpy(ans, readFile(p[0]));
 			close(p[0]);
@@ -71,7 +72,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 			execCMD(ans, cmds->array[i]);
 
-			exit(0); //Não foi possivel executar o comando
+			exit(0);
 		}
 	}
 }
@@ -86,9 +87,8 @@ void deleteNotebook(char *path){
 		write(2, "Error on deleting notebook file.\n", 29);
 	}
 }
-/*
-Cria um notebook novo já processado e apaga o original
-*/
+
+//Cria um notebook novo já processado e apaga o original
 void replaceNotebook(char *notebook, char *str){
 
 	char *nb = strdup(notebook);
@@ -105,11 +105,13 @@ void replaceNotebook(char *notebook, char *str){
 	strcpy(sub, path);
 	strcat(sub, "TMP");
 	strcat(sub, nb);
+	free(nb);
+	free(path);
 
 	int fd = open(sub, O_WRONLY, 0644);//verifica se ja existe ficheiro com o nome
 	close(fd);
 	if(fd < 0){
-		signal(SIGINT, sighandler);
+		signal(SIGINT, sighandler); 
 
 		//cria novo nb processado -> sub
 		fd = open(sub, O_CREAT | O_WRONLY, 0644);
@@ -147,9 +149,12 @@ void replaceNotebook(char *notebook, char *str){
 		deleteNotebook(sub);
 
 		signal(SIGINT, SIG_DFL);
+
+		free(sub);
 	}
 }
 
+//junta as Strings numa só
 char *combine(DynaArray *descs, DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	char *str = malloc(1);
