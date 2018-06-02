@@ -104,7 +104,7 @@ void deleteNotebook(char *path){
 void replaceNotebook(char *notebook, char *str){
 
 	char *nb = strdup(notebook);
-
+	char *nb1 = nb;
 	//isola nome do ficheiro
 	while(strstr(nb, "/")){
 		nb = strstr(nb, "/");
@@ -117,7 +117,7 @@ void replaceNotebook(char *notebook, char *str){
 	strcpy(sub, path);
 	strcat(sub, ".TMP");
 	strcat(sub, nb);
-	free(nb);
+	free(nb1);
 	free(path);
 
 	signal(SIGINT, sighandler);

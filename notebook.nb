@@ -13,18 +13,12 @@ main.c
 Makefile
 notebook
 notebook.nb
-ola.txt
-pipe.c
 run.sh
-sort
-utputFile2.txt
-utputFile.txt
 <<<
 Escolher o primeiro e contar o numero de caracteres do notebook enquanto faz ls:
 $| head -1 | wc -m && ls & wc -m < notebook.nb
 >>>
 6
-527
 a.out
 Bash
 btree.c
@@ -37,19 +31,14 @@ main.c
 Makefile
 notebook
 notebook.nb
-ola.txt
-pipe.c
 run.sh
-sort
-utputFile2.txt
-utputFile.txt
+480
 <<<
 Conta chars:
 $2| wc -m || echo NA
 >>>
-156
+107
 <<<
 $ ls >> ls.txt
 >>>
 <<<
-ola oo:
