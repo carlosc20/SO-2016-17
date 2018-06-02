@@ -218,3 +218,51 @@ main.c
 Makefile
 notebook.nb
 run.sh
+2 echo "error"
+Bash
+btree.c
+dynaArray.c
+exemplos
+file.c
+Includes
+ls.txt
+main.c
+Makefile
+notebook.nb
+run.sh
+2 echo "error"
+Bash
+btree.c
+dynaArray.c
+exemplos
+file.c
+Includes
+ls.txt
+main.c
+Makefile
+notebook.nb
+run.sh
+2 echo "error"
+Bash
+btree.c
+dynaArray.c
+exemplos
+file.c
+Includes
+ls.txt
+main.c
+Makefile
+notebook.nb
+run.sh
+2 echo "error"
+Bash
+btree.c
+dynaArray.c
+exemplos
+file.c
+Includes
+ls.txt
+main.c
+Makefile
+notebook.nb
+run.sh

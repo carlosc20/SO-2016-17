@@ -204,7 +204,6 @@ static void execTree(BTree tree){
     } else {
 		char **args;
 		args = cmdArgs(tree->value);
-        fprintf(stderr, "Executando: %s\n", args[0]);
 		execvp(args[0], args);
     }
 }

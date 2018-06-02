@@ -1,11 +1,11 @@
-clean="rm Bash"
+clean="rm notebook"
 echo $clean
 $clean
 
-compile="gcc -o Bash main.c file.c dynaArray.c btree.c"
+compile="gcc -o notebook main.c file.c dynaArray.c btree.c"
 echo $compile
 $compile
 
-run="./Bash notebook.nb"
+run="./notebook notebook.nb"
 echo $run
 $run

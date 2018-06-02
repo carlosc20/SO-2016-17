@@ -45,16 +45,18 @@ void execCMD(DynaArray *ans, char *cmd){
 	}
 
 	close(p[1]);
-
+	
 	pipe(p);
 	dup2(p[0], 2);
 
 	execute(str);
 
-	if(read(p[1], NULL, 1) > 0){ //ve se o comando escreveu para o stderr
-		write(1, "aaaaaaaaaaaaaaaa\n", 17);
+	char buf = 0;
+	if(read(p[1], &buf, 1) > 0){ //ve se o comando escreveu para o stderr
+		write(2, "aaaaaaaaaaaaaaaa\n", 18);
 		exit(1);
 	}
+	write(1, "", 1);
 	close(p[0]);
 	close(p[1]);
 
@@ -69,6 +71,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 		if(fork()){
 			wait(&status);
+			printf("%d\n", status);
 			if(status){
 				exit(2);
 			}
@@ -103,7 +106,7 @@ void deleteNotebook(char *path){
 void replaceNotebook(char *notebook, char *str){
 
 	char *nb = strdup(notebook);
-
+	char *nb1 = nb;
 	//isola nome do ficheiro
 	while(strstr(nb, "/")){
 		nb = strstr(nb, "/");
@@ -116,7 +119,7 @@ void replaceNotebook(char *notebook, char *str){
 	strcpy(sub, path);
 	strcat(sub, "TMP");
 	strcat(sub, nb);
-	free(nb);
+	free(nb1);
 	free(path);
 
 	int fd = open(sub, O_WRONLY, 0644);//verifica se ja existe ficheiro com o nome
