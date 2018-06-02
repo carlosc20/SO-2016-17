@@ -58,7 +58,7 @@ void execCMD(DynaArray *ans, char *cmd){
 	}
 
 	close(p[1]);
-	fprintf(stderr, "%s\n", str);
+
 	execute(str);
 	free(string);
 }
@@ -70,11 +70,14 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 		pipe(p);
 
 		if(fork()){
+			/*
 			wait(&status);
+			printf(">>%d\n", status);
 			if(status != 0){
 				exit(2);
 			}
-
+			*/
+			
 			close(p[1]);
 			insertDynaArrayNoCpy(ans, readFile(p[0]));
 			close(p[0]);
@@ -85,7 +88,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 			close(p[1]);
 
 			execCMD(ans, cmds->array[i]);
-
+			fprintf(stderr, "ola\n");
 			exit(0);
 		}
 	}

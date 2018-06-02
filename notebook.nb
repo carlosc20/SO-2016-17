@@ -1,12 +1,11 @@
 Este comando lista os ficheiros:
-$ ls
+$ false || ls 
 >>>
 a.out
 a.txt
 Bash
 btree.c
 dynaArray.c
- file.c
 file.c
 Includes
 main.c
@@ -17,15 +16,30 @@ pipe.c
 run.sh
 sort
 teste.c
-wc
 <<<
-Escolher o primeiro:
-$| head -1
+Escolher o primeiro e contar o numero de caracteres do notebook enquanto faz ls:
+$| head -1 | wc -m && ls & wc -m < notebook.nb
 >>>
+6
+552
 a.out
-<<<
+a.txt
+Bash
+btree.c
+dynaArray.c
+file.c
+Includes
+main.c
+Makefile
+notebook.nb
+opr.c
+pipe.c
+run.sh
+sort
+teste.c
+!<<<
 Conta chars:
-$2| wc -m
+$2| wc -m || echo NA
 >>>
-125
+114
 <<<

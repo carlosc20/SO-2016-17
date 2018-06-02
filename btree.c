@@ -14,6 +14,13 @@ static BTree newNode(const char* value, BTree left, BTree right){
     return newTree;
 }
 
+static void freeTree(BTree tree){
+    freeTree(tree->left);
+    freeTree(tree->right);
+    free(tree->value);
+    free(tree);
+}
+
 static int isProgram(BTree tree){
     return tree->left == NULL && tree->right == NULL;
 }
@@ -36,17 +43,38 @@ static char* treeToString(BTree tree){
     }
 }
 
-static BTree stringToTree(const char* value){
-    char* split;
-    char* oprs[] = {";", "&", "|", "&&", "||", "<", ">", NULL};
-    char* opr;
-    for(int i = 0;opr = oprs[i]; i++){
-        if(split = strstr(value, opr)){ \
-            *split = '\0'; \
-            return newNode(opr, stringToTree(value), stringToTree(split + strlen(oprs[i]))); \
+static BTree stringToTree(const char* string){
+    char* value = strdup(string);
+    char* oprs[] = {"&&", "||", ";", "&", "|", "<", ">", NULL}; // Comandos com mais caracter primeiro
+    char* split = NULL;
+    char* auxSplit;
+    char* opr = NULL;
+    char* auxOpr;
+    BTree tree;
+
+    for(int i = 0; auxOpr = oprs[i]; i++){
+        auxSplit = strstr(value, auxOpr);
+
+        if(auxSplit && split){
+            if(auxSplit < split){
+                split = auxSplit;
+                opr = auxOpr;
+            }
+        } else {
+            if(auxSplit){
+                split = auxSplit;
+                opr = auxOpr;
+            }
         }
     }
-    return newNode(value, NULL, NULL);
+    if(split){
+        *split = '\0';
+        tree = newNode(opr, stringToTree(value), stringToTree(split + strlen(opr) + 1));
+    } else {
+        tree = newNode(value, NULL, NULL);
+    }
+    free(value);
+    return tree;
 }
 
 static void execTree(BTree tree);
@@ -167,7 +195,7 @@ static void execTree(BTree tree){
     } else {
 		char **args;
 		args = cmdArgs(tree->value);
-
+        fprintf(stderr, "Executando: %s\n", args[0]);
 		execvp(args[0], args);
     }
 }
@@ -176,6 +204,7 @@ void execute(const char* string){
 	BTree tree = stringToTree(string);
     if(fork()){
         wait(NULL);
+        freeTree(tree);
     } else {
         execTree(tree);
         exit(0);
