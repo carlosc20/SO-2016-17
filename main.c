@@ -30,7 +30,7 @@ void execCMD(DynaArray *ans, char *cmd){
 			strcat(error, str);
 			strcat(error, "\n");
 			write(2, error, strlen(error));
-			exit(1);
+			exit(5);
 		} else {
 			str = strstr(str, "|");
 			str++;
@@ -56,13 +56,10 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 		pipe(p);
 
 		if(fork()){
-			/*
 			wait(&status);
-			printf(">>%d\n", status);
-			if(status != 0){
+			if(WEXITSTATUS(status) == 5){
 				exit(2);
 			}
-			*/
 			
 			close(p[1]);
 			insertDynaArrayNoCpy(ans, readFile(p[0]));
