@@ -30,6 +30,7 @@ void execCMD(DynaArray *ans, char *cmd){
 			strcat(error, str);
 			strcat(error, "\n");
 			write(2, error, strlen(error));
+			free(error);
 			exit(5);
 		} else {
 			str = strstr(str, "|");
@@ -45,7 +46,18 @@ void execCMD(DynaArray *ans, char *cmd){
 
 	close(p[1]);
 
+	pipe(p);
+	dup2(p[0], 2);
+
 	execute(str);
+
+	if(read(p[1], NULL, 1) > 0){ //ve se o comando escreveu para o stderr
+		write(2, "aaaaaaaaaaaaaaaa\n", 17);
+		exit(1);
+	}
+	close(p[0]);
+	close(p[1]);
+
 	free(string);
 }
 
@@ -118,6 +130,7 @@ void replaceNotebook(char *notebook, char *str){
 
 
 		if(write(fd, str, strlen(str)) < 0){
+			free(str);
 			write(2, "Error on writing to TMP file!\n", 31);
 			deleteNotebook(sub);
 			exit(1);
@@ -178,7 +191,7 @@ char *combine(DynaArray *descs, DynaArray *cmds, DynaArray *ans){
 int openNotebook(char *path){
 	int fd;
 	if((fd = open(path, O_RDONLY, 0644)) < 0){
-		write(2, "Error On Opening NoteBook!\n", 24);
+		write(2, "Error on opening notebook!\n", 26);
 	}
 	return fd;
 }
