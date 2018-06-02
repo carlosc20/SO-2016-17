@@ -50,11 +50,12 @@ void execCMD(DynaArray *ans, char *cmd){
 	dup2(p[0], 2);
 
 	execute(str);
-
-	if(read(p[1], NULL, 1) > 0){ //ve se o comando escreveu para o stderr
+	char buf = 0;
+	if(read(p[1], &buf, 1) > 0){ //ve se o comando escreveu para o stderr
 		write(2, "aaaaaaaaaaaaaaaa\n", 17);
 		exit(1);
 	}
+	write(1, "", 1);
 	close(p[0]);
 	close(p[1]);
 
@@ -69,6 +70,7 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 
 		if(fork()){
 			wait(&status);
+			printf("%d\n", status);
 			if(status){
 				exit(2);
 			}
