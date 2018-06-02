@@ -48,18 +48,18 @@ void execCMD(DynaArray *ans, char *cmd){
 		} else {
 			str = strstr(str, "|");
 			str++;
-			//Verificar erros!!!!
+
 			write(p[1], ans->array[ans->length - index], strlen(ans->array[ans->length - index]));
 		}
 	} else if(str[0] == '|'){
 		str++;
-		//Verificar erros!!!!
+
 		write(p[1], ans->array[ans->length - 1], strlen(ans->array[ans->length - 1]));
 	}
 
 	close(p[1]);
-
-	execute(string);
+	fprintf(stderr, "%s\n", str);
+	execute(str);
 	free(string);
 }
 
