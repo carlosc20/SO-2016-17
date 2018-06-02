@@ -1,6 +1,7 @@
 Este comando lista os ficheiros:
 $ ls
 >>>
+a.out
 btree.c
 dynaArray.c
 exemplos
@@ -15,32 +16,33 @@ run.sh
 Escolher o primeiro:
 $| head -1
 >>>
-btree.c
+a.out
 <<<
 Conta carateres do resultado do primeiro comando:
 $2| wc -m
 >>>
-89
+95
 <<<
-Faz o mesmo que os comandos anteriores:
+Conta os numeros de caracteres do primeiro ficheiro da lista:
 $3| head -1 | wc -m 
 >>>
-8
+6
 <<<
 Redirecionamento e acrescentar:
 $ ls > teste.txt
 >>>
 <<<
-$ echo "fim" >> teste.txt
+û$ echo "fim" >> teste.txt
 >>>
 <<<
-$ wc -m < teste.txt
+ý$ wc -m < teste.txt
 >>>
-105
+111
 <<<
 Execucao sequencial:
 $ cat teste.txt; rm teste.txt
 >>>
+a.out
 btree.c
 dynaArray.c
 exemplos
@@ -57,6 +59,7 @@ teste.txt
 Execucao concorrente:
 $ ls & ls
 >>>
+a.out
 btree.c
 dynaArray.c
 exemplos
@@ -67,6 +70,7 @@ Makefile
 notebook
 notebook.nb
 run.sh
+a.out
 btree.c
 dynaArray.c
 exemplos
@@ -81,6 +85,7 @@ run.sh
 Exemplos de operadores:
 $ ls && false && echo "Nao aparece"
 >>>
+a.out
 btree.c
 dynaArray.c
 exemplos
@@ -94,6 +99,7 @@ run.sh
 <<<
 $ ls && true && echo "Aparece"
 >>>
+a.out
 btree.c
 dynaArray.c
 exemplos
