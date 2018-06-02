@@ -1,7 +1,8 @@
-Este comando lista os ficheiros:
-$ false || ls
+Este é um documento teste para o projeto de Sistemas Operativos.
+O programa tem a possibilidade de executar comandos.
+Comecemos com algo simples como fazer ls desta diretoria.
+$ ls
 >>>
-a.out
 Bash
 btree.c
 dynaArray.c
@@ -12,33 +13,59 @@ ls.txt
 main.c
 Makefile
 notebook
+notebook2.nb
 notebook.nb
 run.sh
 <<<
-Escolher o primeiro e contar o numero de caracteres do notebook enquanto faz ls:
-$| head -1 | wc -m && ls & wc -m < notebook.nb
+Podemos também receber o output do comando anterior.
+Contemos o numero de linhas do programa.
+$| wc -l
 >>>
-6
-a.out
+13
+<<<
+Também conseguimos ler outputs sem ser o anterior.
+Vamos tentar retirar a primeira linha do primeiro comando.
+$2| line
+>>>
 Bash
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-ls.txt
-main.c
-Makefile
-notebook
-notebook.nb
-run.sh
-480
 <<<
-Conta chars:
-$2| wc -m || echo NA
+No que toca a requesitos adicionais nós conseguimos:
+Executar pipelines:
+$ ls | line
 >>>
-107
+Bash
 <<<
-$ ls >> ls.txt
+Redirecionar outputs:
+$| cat > outputFile.txt
+>>>
+<<<
+Redirecionar inputs:
+$2| line >> outputFile.txt
+>>>
+<<<
+Redirecionar outputs com append:
+$ cat < outputFile.txt
+>>>
+Bash
+Bash
+<<<
+E também conseguimos misturar redirecionamento com pipelines:
+$ ls | head > outputFile2.txt
+>>>
+<<<
+�$ cat < outputFile2.txt | sort -r > outputFile3.txt
+>>>
+<<<
+$ cat < outputFile3.txt
+>>>
+<<<
+Apaguemos agora os ficheiros
+$rm outputFile.txt
+>>>
+<<<
+$rm outputFile2.txt
+>>>
+<<<
+$rm outputFile3.txt
 >>>
 <<<
