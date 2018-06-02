@@ -7,21 +7,7 @@
 
 #define BUFFER 512
 
-void noArgs(int argc){
-	if(argc < 2){
-		fprintf(stderr, "use: Bash <path>\n");
-		exit(1);
-	}
-}
-
-int openNoteBook(char *path){
-	int fd;
-	if((fd = open(path, O_RDWR, 0644)) < 0){
-		write(2, "Error On Opening File!\n", 24);
-	}
-
-	return fd;
-}
+int FLAG = 0;
 
 void execCMD(DynaArray *ans, char *cmd){
 	char *str = strdup(cmd);
@@ -94,19 +80,19 @@ void callCMDS(DynaArray *cmds, DynaArray *ans){
 	}
 }
 
-void handler(int sig) {
-	printf("control_c\n");
+void sighandler(int sig) {
+	FLAG = 1;
 }
 
-/*
-Cria um notebook novo já processado e apaga o original
-*/
+
+void deleteNotebook(char *path){
+	if(unlink(path)){
+		write(2, "Error on deleting notebook file.\n", 29);
+	}
+}
+
+//Cria um notebook novo já processado e apaga o original
 void replaceNotebook(char *notebook, char *str){
-	/*
-	signal(SIGINT, handler);//^C
-	signal(signum, SIG_IGN) -> ignora o sinal
-	signal(signum, SIG_DEFAULT) -> volta ao normal
-	*/
 
 	char *nb = strdup(notebook);
 
@@ -122,36 +108,56 @@ void replaceNotebook(char *notebook, char *str){
 	strcpy(sub, path);
 	strcat(sub, "TMP");
 	strcat(sub, nb);
+	free(nb);
+	free(path);
 
-	int fd = open(sub, O_WRONLY, 0644);
+	int fd = open(sub, O_WRONLY, 0644);//verifica se ja existe ficheiro com o nome
+	close(fd);
 	if(fd < 0){
-		fd = open(sub, O_CREAT | O_RDWR, 0644);
+		signal(SIGINT, sighandler); 
+
+		//cria novo nb processado -> sub
+		fd = open(sub, O_CREAT | O_WRONLY, 0644);
+
+
 		if(write(fd, str, strlen(str)) < 0){
 			write(2, "Error on writing to TMP file!\n", 31);
-			if(unlink(sub)){
-				write(2, "Error on Deleting TMP file!\n", 29);
-			}
+			deleteNotebook(sub);
 			exit(1);
 		}
 
+		//existe novo e original -> em caso de interrupção apaga o novo
+		if(FLAG){
+			deleteNotebook(sub);
+			exit(3);
+		}
+
+		
+		//apaga antigo
 		if(unlink(notebook)){
-			write(2, "Error on Deleting notebook file!\n", 34);
-			if(unlink(sub)){
-				write(2, "Error on Deleting TMP file!\n", 29);
-			}
+			write(2, "Error on deleting notebook file!\n", 34);
+			deleteNotebook(sub);
 			exit(2);
 		}
 
+		//existe só novo
+		//neste ponto o interrupt é ignorado para evitar perda de dados
+
+		//muda nome do ficheiro
 		if(link(sub, notebook)){
-			write(2, "Error on Renaming TMP file!\n", 29);
+			write(2, "Error on renaming TMP file!\n", 29);
 		}
 
-		if(unlink(sub)){
-			write(2, "Error on Deleting TMP file!\n", 29);
-		}
+		//apaga novo
+		deleteNotebook(sub);
+
+		signal(SIGINT, SIG_DFL);
+
+		free(sub);
 	}
 }
 
+//junta as Strings numa só
 char *combine(DynaArray *descs, DynaArray *cmds, DynaArray *ans){
 	int i = 0;
 	char *str = malloc(1);

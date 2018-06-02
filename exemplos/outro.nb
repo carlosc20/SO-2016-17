@@ -1,0 +1,23 @@
+Este é um documento teste para o projeto de Sistemas Operativos.
+O programa tem a possibilidade de executar comandos.
+Comecemos com algo simples como fazer ls desta diretoria.
+$ ls
+Podemos também receber o output do comando anterior.
+Contemos o numero de linhas do programa.
+$| wc -l
+Também conseguimos ler outputs sem ser o anterior.
+Vamos tentar retirar a primeira linha do primeiro comando.
+$2| line
+No que toca a requesitos adicionais nós conseguimos:
+Executar pipelines:
+$ ls | line
+Redirecionar outputs:
+$| cat >outputFile.txt
+Redirecionar outputs com append:
+$2| cat >>outputFile.txt
+Redirecionar inputs:
+$ cat <outputFile.txt
+E também conseguimos misturar redirecionamento com pipelines:
+$ ls /bin/ | head >outputFile2.txt
+$ cat <outputFile2.txt | sort -r >outputFile3.txt
+$ cat <outputFile3.txt
