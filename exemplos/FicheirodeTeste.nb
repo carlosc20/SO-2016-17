@@ -13,11 +13,15 @@ Executar pipelines:
 $ ls | line
 Redirecionar outputs:
 $| cat >outputFile.txt
-Redirecionar outputs com append:
-$2| cat >>outputFile.txt
 Redirecionar inputs:
+$2| line >>outputFile.txt
+Redirecionar outputs com append:
 $ cat <outputFile.txt
 E também conseguimos misturar redirecionamento com pipelines:
-$ ls /bin/ | head >outputFile2.txt
+$ ls | head >outputFile2.txt
 $ cat <outputFile2.txt | sort -r >outputFile3.txt
 $ cat <outputFile3.txt
+Apaguemos agora os ficheiros
+$rm outputFile.txt
+$rm outputFile2.txt
+$rm outputFile3.txt
