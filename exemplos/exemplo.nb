@@ -2,5 +2,20 @@ Este comando lista os ficheiros:
 $ ls
 Escolher o primeiro:
 $| head -1
-Conta chars:
+Conta carateres do resultado do primeiro comando:
 $2| wc -m
+Faz o mesmo que os comandos anteriores:
+$3| head -1 | wc -m 
+Redirecionamento e acrescentar:
+$ ls > teste.txt
+$ echo "fim" >> teste.txt
+$ wc -m < teste.txt
+Execucao sequencial:
+$ cat teste.txt; rm teste.txt
+Execucao concorrente:
+ls & ls
+Exemplos de operadores:
+$ ls && false && echo "Nao aparece"
+$ ls && true && echo "Aparece"
+$ false || echo "Aparece"
+$ true || echo "Nao aparece"
