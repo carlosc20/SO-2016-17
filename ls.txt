@@ -379,3 +379,17 @@ Makefile
 notebook.nb
 ola.txt
 run.sh
+2 
+Bash
+btree.c
+dynaArray.c
+exemplos
+file.c
+Includes
+ls.txt
+main.c
+Makefile
+notebook
+notebook.nb
+ola.txt
+run.sh

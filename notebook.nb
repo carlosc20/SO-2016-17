@@ -1,8 +1,33 @@
 Este comando lista os ficheiros:
 $ false || ls
+>>>
+2 
+Bash
+btree.c
+dynaArray.c
+exemplos
+file.c
+Includes
+ls.txt
+main.c
+Makefile
+notebook
+notebook.nb
+ola.txt
+run.sh
+<<<
 Escolher o primeiro e contar o numero de caracteres do notebook enquanto faz ls:
 $| head -1 | wc -m && ls & wc -m < notebook.nb
+>>>
+3
+231
+<<<
 Conta chars:
 $2| wc -m || echo NA
+>>>
+112
+<<<
 $ ls >> ls.txt
+>>>
+<<<
 ola oo:
