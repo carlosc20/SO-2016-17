@@ -1,6 +1,6 @@
 
 make:
-	gcc -o notebook main.c file.c dynaArray.c btree.c
+	gcc -o notebook src/main.c src/file.c src/dynaArray.c src/btree.c
 
 clean:
-	rm notebook
+	rm -f notebook

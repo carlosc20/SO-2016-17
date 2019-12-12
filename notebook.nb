@@ -1,115 +1,62 @@
 Este comando lista os ficheiros:
 $ ls
 >>>
-a.out
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-main.c
-Makefile
-notebook
-notebook.nb
-run.sh
 <<<
 Escolher o primeiro:
 $| head -1
 >>>
-a.out
 <<<
 Conta carateres do resultado do primeiro comando:
 $2| wc -m
 >>>
-95
 <<<
 Conta os numeros de caracteres do primeiro ficheiro da lista:
-$3| head -1 | wc -m 
+$3| head -1 | wc -m
 >>>
-6
 <<<
 Redirecionamento e acrescentar:
 $ ls > teste.txt
 >>>
 <<<
-û$ echo "fim" >> teste.txt
+$ echo "fim" >> teste.txt
 >>>
 <<<
-ý$ wc -m < teste.txt
+$ wc -m < teste.txt
 >>>
-111
+67
 <<<
 Execucao sequencial:
 $ cat teste.txt; rm teste.txt
 >>>
-a.out
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-main.c
-Makefile
-notebook
-notebook.nb
-run.sh
-teste.txt
-"fim"
 <<<
 Execucao concorrente:
 $ ls & ls
 >>>
-a.out
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-main.c
 Makefile
+exemplos
 notebook
 notebook.nb
 run.sh
-a.out
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-main.c
-Makefile
-notebook
-notebook.nb
-run.sh
+src
 <<<
 Exemplos de operadores:
 $ ls && false && echo "Nao aparece"
 >>>
-a.out
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-main.c
 Makefile
+exemplos
 notebook
 notebook.nb
 run.sh
+src
 <<<
 $ ls && true && echo "Aparece"
 >>>
-a.out
-btree.c
-dynaArray.c
-exemplos
-file.c
-Includes
-main.c
 Makefile
+exemplos
 notebook
 notebook.nb
 run.sh
+src
 "Aparece"
 <<<
 $ false || echo "Aparece"
